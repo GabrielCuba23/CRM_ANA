@@ -120,8 +120,13 @@ Las pruebas de integración y navegador crean bases locales aisladas. Nunca apun
 
 `npm run package` usa Python `zipfile`, incluye fuente, lockfile, documentación, web compilada y extensión compilada; excluye Git, secretos, bases de desarrollo, caches y dependencias. Produce `artifacts/crm-whatsapp-ana-completo.zip`. Descomprime y sube el contenido de la carpeta raíz a GitHub. No subas `.dev.vars` ni `wrangler.local.toml`.
 
+## Identidad visual
+
+Se utiliza el logo original de ANA entregado por el usuario, conservado sin modificaciones en `src/assets/ana-logo.png`. El componente `AnaLogo` lo muestra en la barra lateral, el acceso y la cabecera de móvil/panel lateral. Vite incluye la imagen local en la web y en la extensión. La paleta usa el azul `#2957A4`, obtenido del propio archivo, con superficies blancas y azul oscuro para navegación. Los estados y las alertas conservan sus colores semánticos.
+
 ## Estructura
 
+- `src/components/AnaLogo.jsx`: emblema original compartido por todas las vistas.
 - `src/App.jsx`: estado, sincronización, operador, búsqueda, bandejas, directorio y Kanban.
 - `src/components/SpaceDetail.jsx`: las cuatro pestañas de cada contacto y la colisión.
 - `src/components/SpaceForm.jsx`: alta y edición del espacio y sus responsables.

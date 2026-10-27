@@ -19,3 +19,11 @@ Verificado el 27 de octubre de 2026 en el entorno cloud, con Node 24.19.0 y Chro
 - GitHub Actions: se incluye el flujo CI, sin afirmar que haya corrido en GitHub.
 
 El ZIP se prepara con Python y se comprueba con `ZipFile.testzip`. Excluye secretos, sesión, datos locales y node_modules. La configuración reutilizable del entorno cloud guarda install_script y start_skill como borrador, sin publicar automáticamente.
+
+## Identidad visual ANA
+
+- Logo original aportado por el usuario en `LOGO ANA AZUL.zip`, conservado byte por byte en `src/assets/ana-logo.png` (929 × 412, transparencia original).
+- Azul principal extraído del archivo: `#2957A4`.
+- Verificado en navegador: acceso, barra lateral y cabecera adaptable a 1440, 850, 601, 450 y 380 píxeles, con imagen cargada, proporción conservada y sin desbordamiento horizontal.
+- El PNG compilado de la web y el de la extensión coinciden byte por byte con el original.
+- Compilación y recorrido completo de navegador aprobados después de integrar el logo.

@@ -7,4 +7,4 @@
 - Cloudflare Wrangler y Miniflare: Cloudflare y colaboradores, licencias MIT/Apache-2.0 según paquete.
 - Playwright: Microsoft, licencia Apache-2.0, usado para pruebas de desarrollo.
 
-Las versiones exactas, dependencias transitivas e integridad de artefactos se registran en `package-lock.json`. Este proyecto no incorpora logotipos oficiales de ANA/MIDAGRI ni de WhatsApp.
+Las versiones exactas, dependencias transitivas e integridad de artefactos se registran en `package-lock.json`. El emblema de la Autoridad Nacional del Agua se incorpora a partir del archivo `LOGO ANA AZUL.png`, facilitado expresamente por el usuario para identificar esta plataforma. El original se conserva en `src/assets/ana-logo.png` sin modificaciones. La marca pertenece a su titular; su inclusión no implica una certificación de este software por ANA. No se incorporan logotipos de MIDAGRI ni de WhatsApp.

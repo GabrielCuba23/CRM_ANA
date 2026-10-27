@@ -17,6 +17,7 @@ createRoot(document.getElementById('root')).render(<React.StrictMode><App/></Rea
 ```jsx
 import React,{useCallback,useEffect,useRef,useState} from 'react';
 import Login from './components/Login.jsx';
+import AnaLogo from './components/AnaLogo.jsx';
 import SpaceForm from './components/SpaceForm.jsx';
 import SpaceDetail from './components/SpaceDetail.jsx';
 import DataCenter from './components/DataCenter.jsx';
@@ -77,8 +78,8 @@ export default function App(){
  const filtered=filterSpaces(data,search,tray,operator),pending=data.tasks.filter(t=>!t.done).length;
  const navigation=[['Directorio','users'],['Kanban','grid'],['Centro de datos','database']];
  return <div className={`app ${isExtension?'extension-mode':''} ${space&&view==='Directorio'?'has-selection':''}`}>
- <aside className="sidebar"><a className="brand" href="#" onClick={e=>{e.preventDefault();setView('Directorio');}}><span className="brand-logo">ana</span><span>COORDINACIÓN<br/><b>INSTITUCIONAL</b></span></a><div className="workspace-label">ESPACIO DE TRABAJO</div><nav aria-label="Navegación principal">{navigation.map(([label,icon])=><button key={label} className={view===label?'active':''} onClick={()=>{setView(label);setSelected('');}}><Icon name={icon}/>{label}{label==='Directorio'&&<span>{data.spaces.length}</span>}</button>)}</nav><div className="sidebar-note"><span className="live-dot"/><strong>Una agenda, todo el equipo</strong><p>Coordina con trazabilidad, incluso fuera de la oficina.</p></div><footer><span>ANA · MIDAGRI</span><small>Coordinación institucional</small></footer></aside>
- <div className="workspace"><header className="topbar"><div className="breadcrumb">Agenda cloud <span>/</span> <strong>{view}</strong></div><div className="operator"><Icon name="users" size={17}/><label htmlFor="operator">¿Quién opera esta PC?</label><select id="operator" aria-label="¿Quién opera esta PC?" value={operator} onChange={e=>{setOperator(e.target.value);localStorage.setItem('ana.operator',e.target.value);}}><option value="">Elegir operador</option>{data.members.map(m=><option key={m}>{m}</option>)}</select><button className="icon-btn" aria-label="Administrar integrantes" disabled={!operator} onClick={()=>setTeamOpen(true)}><Icon name="settings" size={17}/></button><button className="icon-btn" aria-label="Cerrar sesión" onClick={logout}><Icon name="logout" size={17}/></button></div></header>
+ <aside className="sidebar"><a className="brand" href="#" onClick={e=>{e.preventDefault();setView('Directorio');}}><AnaLogo/><span className="brand-caption">COORDINACIÓN INSTITUCIONAL</span></a><div className="workspace-label">ESPACIO DE TRABAJO</div><nav aria-label="Navegación principal">{navigation.map(([label,icon])=><button key={label} className={view===label?'active':''} onClick={()=>{setView(label);setSelected('');}}><Icon name={icon}/>{label}{label==='Directorio'&&<span>{data.spaces.length}</span>}</button>)}</nav><div className="sidebar-note"><span className="live-dot"/><strong>Una agenda, todo el equipo</strong><p>Coordina con trazabilidad, incluso fuera de la oficina.</p></div><footer><span>ANA · MIDAGRI</span><small>Coordinación institucional</small></footer></aside>
+ <div className="workspace"><header className="topbar"><div className="compact-brand"><AnaLogo/><span>COORDINACIÓN<br/>INSTITUCIONAL</span></div><div className="breadcrumb">Agenda cloud <span>/</span> <strong>{view}</strong></div><div className="operator"><Icon name="users" size={17}/><label htmlFor="operator">¿Quién opera esta PC?</label><select id="operator" aria-label="¿Quién opera esta PC?" value={operator} onChange={e=>{setOperator(e.target.value);localStorage.setItem('ana.operator',e.target.value);}}><option value="">Elegir operador</option>{data.members.map(m=><option key={m}>{m}</option>)}</select><button className="icon-btn" aria-label="Administrar integrantes" disabled={!operator} onClick={()=>setTeamOpen(true)}><Icon name="settings" size={17}/></button><button className="icon-btn" aria-label="Cerrar sesión" onClick={logout}><Icon name="logout" size={17}/></button></div></header>
  <nav className="mobile-nav" aria-label="Vistas">{navigation.map(([label,icon])=><button key={label} className={view===label?'active':''} onClick={()=>{setView(label);setSelected('');}}><Icon name={icon} size={17}/>{label}</button>)}</nav>
  <div className="sync-line"><span className={`live-dot ${online?'':'offline'}`}/>{online?'Sincronizado':'Sin conexión confirmada'}{lastSync&&<time> · {lastSync.toLocaleTimeString('es-PE',{timeZone:'America/Lima',hour:'2-digit',minute:'2-digit'})}</time>}<button onClick={load}>Actualizar</button>{!presenceOk&&space&&<span className="warning-text">Presencia sin actualizar: no se puede confirmar quién está viendo.</span>}</div>
  {!operator&&<div className="operator-prompt">Selecciona «¿Quién opera esta PC?» para registrar notas, tareas y acuerdos con tu nombre.</div>}
@@ -97,6 +98,18 @@ export default function App(){
  {spaceForm&&<SpaceForm initial={spaceForm} members={data.members} busy={busy} onSave={p=>act('UPSERT_SPACE',p)} onClose={()=>setSpaceForm(null)}/>}
  {teamOpen&&<Modal title="Integrantes del equipo" onClose={()=>setTeamOpen(false)}><p className="muted">Los cambios se comparten con todas las PC. Reasigna primero los espacios y tareas pendientes antes de eliminar un integrante.</p><div className="team-list">{data.members.map(m=><div key={m}><Avatar name={m}/><strong>{m}</strong><Button kind="quiet" disabled={busy||data.members.length<2} onClick={()=>{if(confirm(`¿Eliminar a ${m} del equipo?`))act('UPDATE_MEMBERS',{members:data.members.filter(x=>x!==m)});}}>Eliminar</Button></div>)}</div><Form className="row" onSave={async(f,form)=>{if(await act('UPDATE_MEMBERS',{members:[...data.members,String(f.get('member')).trim()]}))form.reset();}}><Field label="Nombre del nuevo integrante" name="member" required maxLength={80}/><Button disabled={busy}>Agregar</Button></Form></Modal>}
  </div>;
+}
+```
+
+## src/components/AnaLogo.jsx
+
+```jsx
+import React from 'react';
+import anaLogo from '../assets/ana-logo.png';
+
+export default function AnaLogo({className=''}) {
+  return <img className={`ana-logo ${className}`} src={anaLogo}
+    alt="ANA · Autoridad Nacional del Agua" width={929} height={412} decoding="async"/>;
 }
 ```
 
@@ -127,6 +140,7 @@ export function Avatar({name}){return <span className="avatar" aria-label={name}
 import React,{useState} from 'react';
 import {isExtension,apiOrigin,request} from '../api.js';
 import {Button,Field,Icon} from './UI.jsx';
+import AnaLogo from './AnaLogo.jsx';
 export default function Login({onLogin}){
  const [error,setError]=useState(''),[busy,setBusy]=useState(false);
  async function login(e){
@@ -139,7 +153,7 @@ export default function Login({onLogin}){
    localStorage.setItem('ana.api',base);sessionStorage.setItem('ana.token',token);onLogin({base,token,data});
   }catch(err){setError(err.message);}finally{setBusy(false);}
  }
- return <main className="login"><section className="login-card"><div className="brand-mark">a<span>n</span>a</div><p className="eyebrow">COORDINACIÓN INSTITUCIONAL · MIDAGRI</p><h1>El equipo conectado.<br/>La gestión, en orden.</h1><p>Agenda cloud, seguimiento de CUT y acuerdos en un solo lugar.</p><form onSubmit={login}>
+ return <main className="login"><section className="login-card"><div className="login-brand"><AnaLogo/></div><p className="eyebrow">COORDINACIÓN INSTITUCIONAL · MIDAGRI</p><h1>El equipo conectado.<br/>La gestión, en orden.</h1><p>Agenda cloud, seguimiento de CUT y acuerdos en un solo lugar.</p><form onSubmit={login}>
  {isExtension&&<Field label="Dirección de tu aplicación Cloudflare Pages" type="url" name="url" required defaultValue={localStorage.getItem('ana.api')||''} autoComplete="url"/>}
  <Field label="Token de acceso del equipo" name="token" type="password" minLength={24} maxLength={1024} required autoComplete="current-password"/>
  {error&&<p className="error" role="alert">{error}</p>}<Button disabled={busy} type="submit">{busy?'Conectando':'Entrar al espacio de trabajo'}<Icon name="arrow"/></Button>

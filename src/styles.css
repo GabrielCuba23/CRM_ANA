@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{--ana-blue:#2b57a5;--ana-blue-hover:#234989;--ana-navy:#17345e;--ana-surface:#f3f6fc;--ana-border:#dce4f2;--ana-muted:#526789;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#212c40;background:#f2f4f9;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;font-size:14px}
+:root{--ana-blue:#2957a4;--ana-blue-hover:#234989;--ana-navy:#17345e;--ana-surface:#f3f6fc;--ana-border:#dce4f2;--ana-muted:#526789;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#212c40;background:#f2f4f9;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;font-size:14px}
 
 *{box-sizing:border-box}
 body{margin:0}
@@ -399,7 +399,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .btn.secondary:hover:not(:disabled){background:#edf3fc}
 .btn.quiet{color:var(--ana-blue)}
 .sidebar{background:var(--ana-navy)}
-.sidebar nav button.active{background:#2b57a5;color:#fff}
+.sidebar nav button.active{background:var(--ana-blue);color:#fff}
 .sidebar nav button.active span{background:#426bb0}
 .sidebar-note{background:linear-gradient(130deg,#234777,#1c3c6b);border-color:#44618e}
 .trays button.active{background:#e8effb;border-color:#cad8ef;color:var(--ana-blue)}
@@ -415,3 +415,33 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .brand-mark span{color:var(--ana-blue)}
 @media(max-width:600px){.mobile-nav button.active{background:#e8effb;color:var(--ana-blue)}}
 .extension-mode .mobile-nav button.active{background:#e8effb;color:var(--ana-blue)}
+
+/* Logo original suministrado por el equipo, conservado sin redibujar ni recortar. */
+.ana-logo{display:block;width:100%;height:auto;object-fit:contain;flex-shrink:0}
+.brand{display:flex;flex-direction:column;gap:11px;background:#fff;border-radius:10px;padding:14px 12px 12px;text-decoration:none;border:1px solid #dce4f2}
+.brand>.ana-logo{width:100%;max-width:164px}
+.brand>.brand-caption:last-child{display:block;font-size:7px;font-weight:650;letter-spacing:1.1px;line-height:1.6;text-align:center;color:#2957a4}
+.compact-brand{display:none}
+.login-brand{width:260px;max-width:100%;margin-bottom:32px}
+.sidebar nav button{color:#c4d4ed}
+.sidebar-note p,.sidebar footer,.sidebar footer small{color:#c0cfe5}
+.login-aside>span,.login-aside p{color:#cfddf5}
+@media(max-width:900px){
+ .sidebar .brand{display:none}
+ .sidebar nav{margin-top:12px}
+ .compact-brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+ .compact-brand>.ana-logo{width:112px}
+ .compact-brand>span{display:none}
+ .topbar{gap:16px}
+}
+@media(max-width:600px){
+ .topbar{flex-direction:column;align-items:stretch;gap:12px;padding:12px 15px}
+ .compact-brand{display:flex;gap:16px;margin:0}
+ .compact-brand>.ana-logo{width:130px}
+ .compact-brand>span{display:block;color:#526789;font-size:8px;line-height:1.8;letter-spacing:1px}
+ .login-brand{width:240px;margin-bottom:27px}
+}
+.extension-mode .topbar{flex-direction:column;align-items:stretch;gap:12px;padding:12px 15px}
+.extension-mode .compact-brand{display:flex;align-items:center;gap:16px}
+.extension-mode .compact-brand>.ana-logo{width:130px}
+.extension-mode .compact-brand>span{display:block;color:#526789;font-size:8px;line-height:1.8;letter-spacing:1px}
