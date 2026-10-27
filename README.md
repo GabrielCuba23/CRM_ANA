@@ -64,6 +64,12 @@ Los teléfonos se normalizan quitando espacios y signos, sin inventar prefijos i
 
 `Abrir borrador en WhatsApp` abre un enlace oficial con texto preparado. Para grupos el destinatario se elige manualmente. No confirma ni automatiza el envío. La bitácora registra «borrador abierto» o «texto copiado», sin afirmar que el mensaje se entregó.
 
+## Operadores del equipo
+
+La lista inicial contiene Hanz, Fernando, Acxel, Andrés, Shirley, Jaruska, Marco, Alejandra, Marcelo, Luciano, Sheila y Cristina. Selecciona tu nombre en «¿Quién opera esta PC?». Para agregar más personas, pulsa el botón **+** junto al selector, escribe el nombre y pulsa **Crear operador**; el cambio se guarda en D1 y se comparte con todas las PC.
+
+En una base ya existente, la API actualiza la lista una sola vez al recibir una consulta autenticada. Conserva operadores personalizados y los nombres anteriores que aún tengan espacios o tareas pendientes asignados. Las altas y bajas posteriores no se reinician al sincronizar. Las notas mantienen su autor histórico, y una restauración JSON respeta la lista exacta del respaldo.
+
 ## Operación del equipo
 
 - El token compartido autentica al **equipo**. El selector identifica al operador por declaración y no es una identidad criptográficamente verificada. Cualquier poseedor del token tiene acceso total, incluida restauración. Este modelo cumple acceso maestro compartido, pero no reemplaza permisos individuales, MFA ni auditoría inalterable.

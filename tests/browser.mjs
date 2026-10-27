@@ -19,6 +19,18 @@ try{
  await page.getByRole('button',{name:'Entrar al espacio de trabajo'}).click();
  await page.getByRole('heading',{name:'Directorio de espacios'}).waitFor();
  await page.getByLabel('¿Quién opera esta PC?').selectOption('Marco');
+ const expectedOperators=['Hanz','Fernando','Acxel','Andrés','Shirley','Jaruska','Marco','Alejandra','Marcelo','Luciano','Sheila','Cristina'];
+ assert.deepEqual(await page.locator('#operator option').allTextContents(),['Elegir operador',...expectedOperators]);
+ await page.getByRole('button',{name:'Agregar o administrar operadores'}).click();
+ await page.getByLabel('Nombre del nuevo operador').fill('Operador de prueba');
+ await page.getByRole('button',{name:'Crear operador',exact:true}).click();
+ await page.locator('.team-list').getByText('Operador de prueba',{exact:true}).waitFor();
+ await page.getByRole('button',{name:'Cerrar diálogo',exact:true}).click();
+ await page.getByLabel('¿Quién opera esta PC?').selectOption('Operador de prueba');
+ assert.equal(await page.getByLabel('¿Quién opera esta PC?').inputValue(),'Operador de prueba');
+ await page.reload();await page.waitForFunction(()=>document.querySelector('#operator')?.value==='Operador de prueba');
+ assert.equal(await page.getByLabel('¿Quién opera esta PC?').inputValue(),'Operador de prueba');
+ await page.getByLabel('¿Quién opera esta PC?').selectOption('Marco');
  await page.getByRole('button',{name:'Nuevo espacio',exact:true}).click();
  const dialog=page.getByRole('dialog');
  await dialog.getByLabel('Nombre del contacto o grupo').fill('Coordinación ALA Huallaga');
@@ -34,7 +46,7 @@ try{
  await page.getByRole('button',{name:'Registrar nota'}).click();await page.locator('.timeline').getByText('Validar aforo y preparar el informe para la dirección.').waitFor();
  await page.getByRole('button',{name:'Tareas',exact:true}).click();
  await page.getByLabel('Nueva tarea').fill('Revisar expediente técnico');
- await page.getByLabel('Responsable',{exact:true}).selectOption('Lucía');
+ await page.getByLabel('Responsable',{exact:true}).selectOption('Fernando');
  await page.getByLabel('Fecha límite').fill('2026-11-01');
  await page.getByRole('button',{name:'Agregar tarea'}).click();
  await page.getByLabel('Completar Revisar expediente técnico').click();
@@ -43,7 +55,7 @@ try{
  await page.getByLabel('Tema de la reunión').fill('Mesa técnica de coordinación');
  await page.getByLabel('Fecha y hora (America/Lima)').fill('2026-11-02T10:30');
  await page.getByLabel('Enlace de Meet o Zoom (opcional)').fill('https://meet.google.com/');
- await page.getByLabel('Participantes',{exact:true}).fill('Marco, Lucía y equipo ALA');
+ await page.getByLabel('Participantes',{exact:true}).fill('Marco, Fernando y equipo ALA');
  await page.getByLabel('Acuerdos · un acuerdo por línea').fill('Consolidar informe\nRemitir expediente a dirección');
  await page.getByRole('button',{name:'Agendar reunión'}).click();
  await page.getByRole('button',{name:'Generar minuta'}).click();
@@ -58,8 +70,8 @@ try{
  await page.locator('.template-use').filter({hasText:'/seguimiento'}).waitFor();
  const second=await browser.newContext({viewport:{width:420,height:900}});const secondPage=await second.newPage();
  await secondPage.goto(runtime.base);await secondPage.getByLabel('Token de acceso del equipo').fill(runtime.token);await secondPage.getByRole('button',{name:'Entrar al espacio de trabajo'}).click();
- await secondPage.getByLabel('¿Quién opera esta PC?').selectOption('Diego');await secondPage.locator('.space-card').first().click();
- await page.getByText('Diego también tiene abierto este espacio en otra PC',{exact:false}).waitFor({timeout:10000});
+ await secondPage.getByLabel('¿Quién opera esta PC?').selectOption('Hanz');await secondPage.locator('.space-card').first().click();
+ await page.getByText('Hanz también tiene abierto este espacio en otra PC',{exact:false}).waitFor({timeout:10000});
  await page.screenshot({path:'artifacts/web-desktop.png',fullPage:true});
  await secondPage.screenshot({path:'artifacts/web-mobile.png',fullPage:true});
  assert.equal(await secondPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No debe haber desbordamiento horizontal a 420px');
@@ -75,7 +87,7 @@ try{
  const excelDownload=page.waitForEvent('download');await page.getByRole('button',{name:'Descargar .xlsx'}).click();
  const excel=await excelDownload;const wb=XLSX.read(await readFile(await excel.path()),{type:'buffer'});assert.equal(wb.SheetNames.length,5);assert.equal(XLSX.utils.sheet_to_json(wb.Sheets['2_Agenda_Espacios'])[0].Codigo_CUT,'CUT-148920-2026');
  const backupDownload=page.waitForEvent('download');await page.getByRole('button',{name:'Descargar respaldo .json'}).click();
- const backupFile=await backupDownload;const backup=JSON.parse(await readFile(await backupFile.path(),'utf8'));assert.equal(backup.data.members.length,4);assert.equal(backup.data.tasks[0].done,true);
+ const backupFile=await backupDownload;const backup=JSON.parse(await readFile(await backupFile.path(),'utf8'));assert.equal(backup.data.members.length,13);assert.equal(backup.data.tasks[0].done,true);
  await page.getByLabel('Restaurar copia JSON').setInputFiles({name:'respaldo.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});
  await page.getByLabel('Escribe RESTAURAR para confirmar').fill('RESTAURAR');
  await page.getByRole('button',{name:'Restaurar base completa',exact:true}).click();await page.getByText('Copia restaurada correctamente',{exact:true}).waitFor();

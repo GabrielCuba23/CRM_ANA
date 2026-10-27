@@ -1,3 +1,4 @@
+import {ensureInitialOperators,TEAM_ROSTER_VERSION_KEY} from './team.js';
 import {reportTables} from '../shared/domain.js';
 import {HttpError,assert,text,id,members,space,task,meeting,template,validateBackup,columns} from './validation.js';
 const MAX_BYTES=1500000;
@@ -100,6 +101,7 @@ async function restore(db,backup){
   statements.push(db.prepare(`INSERT INTO ${table} (${names.join(',')}) SELECT ${names.map(k=>`json_extract(value,'$.${k}')`).join(',')} FROM json_each(?)`).bind(JSON.stringify(rows)));
  }
  statements.push(db.prepare("INSERT INTO team_config VALUES ('members',?)").bind(JSON.stringify(d.members)));
+ statements.push(db.prepare('INSERT INTO team_config (config_key,config_value) VALUES (?,?)').bind(TEAM_ROSTER_VERSION_KEY,'1'));
  await db.batch(statements);
  return Object.fromEntries(Object.keys(columns).map(t=>[t,d[t].length]));
 }
@@ -110,6 +112,7 @@ export async function onRequest({request,env}){
   assert(['sync','presence','backup','powerbi'].includes(path),'Ruta no encontrada',404);
   if(request.method==='OPTIONS')return new Response(null,{status:204,headers:h});
   await authenticate(request,env,path);
+  await ensureInitialOperators(env.DB);
   if(request.method==='GET'){
    if(path==='presence')return send({presence:await presence(env.DB,id(new URL(request.url).searchParams.get('space_id')))});
    const data=await readState(env.DB);

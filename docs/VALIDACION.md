@@ -5,12 +5,12 @@ Verificado el 27 de octubre de 2026 en el entorno cloud, con Node 24.19.0 y Chro
 - Instalación repetible mediante `npm ci` con lockfile: completada.
 - Migraciones D1 locales iniciales y segunda ejecución sin cambios: completadas, sin pérdida de datos.
 - Compilación Vite y extensión autocontenida: completadas.
-- 7 pruebas unitarias: aprobadas (búsqueda, identidad de contacto, minutas, copia JSON, libro Excel, manifiesto y service worker).
-- 9 escenarios API contra D1 local real de Wrangler: aprobados (autenticación, CRUD y conflictos, autoría, presencia, Power BI, respaldo, restauración, validaciones y CORS).
+- 9 pruebas unitarias: aprobadas (búsqueda, identidad de contacto, minutas, copia JSON, libro Excel, manifiesto, service worker y actualización única de operadores con conservación del historial).
+- 10 escenarios API contra D1 local real de Wrangler: aprobados (autenticación, CRUD y conflictos, autoría, presencia, Power BI, respaldo, restauración, validaciones, altas/bajas persistentes de operadores y CORS).
 - Recorrido Playwright en navegador: aprobado (login erróneo/correcto, operador, alta de contacto, nota, tarea, casilla completada, reunión y acuerdos, minuta, firma, formato, dos PC con colisión, vista móvil, búsqueda global, Kanban, Excel real de cinco hojas, copia JSON y restauración).
 - Lector pasivo ejecutado en DOM simulado de navegador: aprobado; lectura inicial, cambio de título, limpieza al cerrar y comprobación de que no modifica el contenido.
 - `npm audit`: cero vulnerabilidades reportadas en las dependencias instaladas, incluidas las de desarrollo.
-- Aplicación normal en D1 local (sin datos de las pruebas): HTTP 200 en web y API; cero espacios iniciales, cuatro integrantes y tres formatos reales editables.
+- Aplicación normal en D1 local (sin datos de las pruebas): HTTP 200 en web y API; cero espacios iniciales, doce operadores tras la primera consulta autenticada y tres formatos reales editables.
 
 ## Pendiente de validación externa
 
@@ -27,3 +27,10 @@ El ZIP se prepara con Python y se comprueba con `ZipFile.testzip`. Excluye secre
 - Verificado en navegador: acceso, barra lateral y cabecera adaptable a 1440, 850, 601, 450 y 380 píxeles, con imagen cargada, proporción conservada y sin desbordamiento horizontal.
 - El PNG compilado de la web y el de la extensión coinciden byte por byte con el original.
 - Compilación y recorrido completo de navegador aprobados después de integrar el logo.
+
+## Operadores del equipo
+
+- Se verificó la lista inicial de doce nombres, sus acentos y su orden.
+- Se verificó la actualización de una base anterior, conservando operadores personalizados, contactos, autoría histórica y asignaciones activas.
+- Se verificó que las altas y bajas posteriores no se vuelvan a sustituir y que restaurar un JSON conserve la lista exacta de esa copia.
+- En navegador se creó un operador con el botón +, se seleccionó y se comprobó su persistencia tras recargar.
