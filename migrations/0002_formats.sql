@@ -1,0 +1,4 @@
+INSERT OR IGNORE INTO templates (id,command,title,content,created_by,updated_by) VALUES
+('builtin-drive','/drive','Acceso a Google Drive','Acceso a Google Drive: https://drive.google.com/ . Para compartir documentación con el equipo, remita el enlace de la carpeta correspondiente y confirme los permisos de acceso.','Sistema','Sistema'),
+('builtin-tdr','/tdr','Coordinación de términos de referencia','Para coordinar los términos de referencia, agradeceré remitir la versión vigente del documento, el objeto de contratación, los entregables y el plazo previsto. Adjunta el código CUT para su seguimiento.','Sistema','Sistema'),
+('builtin-cut','/cut','Solicitud de código CUT','Para continuar con el seguimiento de su gestión, por favor comparta el código CUT y el documento de referencia.','Sistema','Sistema');

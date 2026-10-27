@@ -1,0 +1,9 @@
+name = "crm-whatsapp-ana"
+pages_build_output_dir = "dist"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "crm_ana_db"
+migrations_dir = "migrations"
+# El UUID real se registra con npm run configure:d1 -- UUID después de crear D1.
