@@ -1,4 +1,4 @@
-# CRM & Agenda Cloud de Coordinación Institucional · ANA / MIDAGRI
+# CRM & Agenda Cloud de Coordinación Institucional ·
 
 Aplicación React + Tailwind para navegador y Chrome Side Panel, Pages Functions y D1. El mismo repositorio construye la web en `dist/` y una extensión Manifest V3 autocontenida en `extension-dist/`. No requiere el celular maestro para gestionar contactos. No es un producto oficial de ANA ni de Meta.
 
