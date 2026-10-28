@@ -1,0 +1,1 @@
+Relacionar el chat abierto en WhatsApp Web con el espacio de coordinación institucional del equipo, mostrando su agenda compartida en el panel lateral.

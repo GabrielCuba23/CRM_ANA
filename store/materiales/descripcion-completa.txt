@@ -1,0 +1,11 @@
+Organiza la coordinación del equipo desde un panel lateral junto a WhatsApp Web o desde la aplicación web fuera de la oficina.
+
+El CRM reúne espacios de contacto, CUT y documentos de referencia, responsables, bitácora, tareas, calendario, reuniones, acuerdos y formatos compartidos. Incluye avisos internos entre operadores, alerta cuando otra PC tiene abierto el mismo espacio, reportes Excel con tablas dinámicas nativas, PDF, conexión Power BI y copia JSON para entrega de cargo.
+
+El lector de WhatsApp es pasivo: observa solo el título del chat abierto para mostrar el espacio correspondiente. No modifica WhatsApp, no lee conversaciones, no descarga adjuntos y no envía mensajes. Puedes pegar voluntariamente texto en el CRM para registrar una tarea.
+
+La aplicación requiere conexión a Internet y el token del equipo administrador. Los datos se guardan en su cuenta Cloudflare D1. El selector de operador identifica quién está trabajando en la PC bajo un acceso maestro compartido.
+
+Las funciones web se actualizan desde Cloudflare. La extensión contiene el lector pasivo, el contenedor del panel y un puente limitado; no recibe el token por ese puente ni ejecuta scripts remotos con permisos de Chrome.
+
+No es una aplicación oficial de WhatsApp o Meta. El emblema y denominación ANA identifican el contexto de coordinación del equipo; esta publicación no implica respaldo oficial de la institución.

@@ -1,0 +1,8 @@
+| Permiso u origen | Uso |
+|---|---|
+| sidePanel | Mostrar el CRM junto a la pestaña de trabajo. |
+| storage | Mantener temporalmente el título del chat por ventana en storage.session y conservar operador/firma en storage.local. |
+| https://web.whatsapp.com/* | Leer únicamente el título del encabezado mediante el content script pasivo. |
+| https://crm-whatsapp-ana.pages.dev/* | Alojar la aplicación web del equipo dentro del iframe y habilitar su almacenamiento de sitio en el panel. |
+
+No se pide activeTab, tabs, historial, cookies, scripting ni acceso general a otros dominios. Los eventos de pestaña se utilizan solo para retirar o actualizar el contexto al cambiar de pestaña; no se recopila historial de navegación.

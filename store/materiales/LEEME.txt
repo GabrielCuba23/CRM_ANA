@@ -1,0 +1,14 @@
+MATERIAL PARA CHROME WEB STORE
+
+Este ZIP contiene imágenes y textos; no es el paquete de la extensión.
+En Nuevo elemento de Chrome Web Store sube crm-ana-extension.zip directamente.
+
+Capturas: 1280 x 800 píxeles. Muestran la aplicación web real del CRM, vinculada al panel de la extensión, con datos sintéticos en una D1 local aislada. No contienen conversaciones, teléfonos reales ni datos institucionales de producción. No se presentan como capturas de WhatsApp ni de la carga real de una extensión en este entorno.
+
+Imagen promocional pequeña: 440 x 280 píxeles. Icono: 128 x 128 píxeles.
+
+Ficha y permisos: copia los textos en los campos correspondientes de la consola. El publicador y correo verificado se configuran con la cuenta Google del administrador.
+
+Visibilidad prevista: No listada. La publicación requiere completar los formularios, acceso de prueba si Google lo solicita y revisión de Google. No está publicada por el hecho de preparar este material.
+
+Política de privacidad: https://crm-whatsapp-ana.pages.dev/privacy.html

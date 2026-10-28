@@ -1,0 +1,5 @@
+Política: https://crm-whatsapp-ana.pages.dev/privacy.html
+
+Declarar los datos que efectivamente trate el despliegue: nombres/teléfonos/correos institucionales y demás información de contacto, título del chat abierto, y registros que los operadores escriben voluntariamente (notas, tareas, minutas y avisos). No se recopila el historial de chats por el lector. El token lo procesa la web HTTPS para autenticar al equipo; no es una contraseña de WhatsApp ni se recopila por el content script.
+
+Las categorías de la consola pueden cambiar: relaciona estas operaciones reales con las categorías vigentes y no marques ausencia de datos solo porque el título sea temporal. El código no incluye anuncios, venta de datos ni analítica comercial. La base es compartida por el equipo y utiliza Cloudflare como infraestructura.

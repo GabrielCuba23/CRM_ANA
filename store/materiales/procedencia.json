@@ -1,0 +1,14 @@
+{
+  "extension_version": "1.2.1",
+  "extension_sha256": "78cbda27c3cb11d6ae30931caab619a3d4819274b7c871a63aeec47172b2db4f",
+  "data": "Datos sintéticos de demostración; no producción",
+  "screenshots": {
+    "width": 1280,
+    "height": 800
+  },
+  "promo": {
+    "width": 440,
+    "height": 280
+  },
+  "generated_at": "2026-10-28T15:26:09.073Z"
+}
