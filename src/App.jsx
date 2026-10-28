@@ -1,3 +1,4 @@
+import {localStore,sessionStore} from './storage.js';
 import React,{useCallback,useEffect,useRef,useState} from 'react';
 import Login from './components/Login.jsx';
 import AnaLogo from './components/AnaLogo.jsx';
@@ -9,13 +10,15 @@ import NotificationCenter from './components/NotificationCenter.jsx';
 import DataCenter from './components/DataCenter.jsx';
 import {Avatar,Badge,Button,Empty,Field,Form,Icon,Modal} from './components/UI.jsx';
 import {filterSpaces,matchChat,STATUSES,UNITS} from '../shared/domain.js';
-import {isExtension,request} from './api.js';
+import {request} from './api.js';
+import {isPanel,panelBridge} from './panelBridge.js';
+import VersionNotice from './components/VersionNotice.jsx';
 const empty={spaces:[],notes:[],tasks:[],meetings:[],templates:[],members:[],notifications:[],agreement_tasks:[]};
 function storedId(key,storage){let id=storage.getItem(key);if(!id){id=crypto.randomUUID();storage.setItem(key,id);}return id;}
-const device=storedId('ana.device',localStorage),pc=storedId('ana.tab',sessionStorage);
-function initialSession(){const token=sessionStorage.getItem('ana.token'),base=isExtension?localStorage.getItem('ana.api'):location.origin;return token&&base?{token,base}:null;}
+const device=storedId('ana.device',localStore),pc=storedId('ana.tab',sessionStore);
+function initialSession(){const token=sessionStore.getItem('ana.token'),base=location.origin;return token?{token,base}:null;}
 export default function App(){
- const [session,setSession]=useState(initialSession),[data,setData]=useState(empty),[loaded,setLoaded]=useState(false),[operator,setOperator]=useState(localStorage.getItem('ana.operator')||'');
+ const [session,setSession]=useState(initialSession),[data,setData]=useState(empty),[loaded,setLoaded]=useState(false),[operator,setOperator]=useState(localStore.getItem('ana.operator')||'');
  const [directoryUnit,setDirectoryUnit]=useState(''),[directoryOwner,setDirectoryOwner]=useState('');
  const [view,setView]=useState('Directorio'),[search,setSearch]=useState(''),[tray,setTray]=useState('Todos'),[selected,setSelected]=useState('');
  const [noticesOpen,setNoticesOpen]=useState(false),[noticeDraft,setNoticeDraft]=useState(null),[unread,setUnread]=useState(0);
@@ -43,16 +46,14 @@ export default function App(){
   const timer=setInterval(()=>{if(!mutation.current&&!syncInFlight.current)load();},12000);
   return()=>{clearInterval(timer);loadGeneration.current++;syncAbort.current?.abort();syncAbort.current=null;syncInFlight.current=false;};
  },[session,load]);
- useEffect(()=>{if(loaded&&operator&&!data.members.includes(operator)){setOperator('');localStorage.removeItem('ana.operator');}},[loaded,data.members,operator]);
+ useEffect(()=>{if(loaded&&operator&&!data.members.includes(operator)){setOperator('');localStore.removeItem('ana.operator');}},[loaded,data.members,operator]);
  useEffect(()=>{
-  if(!isExtension)return;
-  let active=true,key;
-  chrome.windows.getCurrent().then(async window=>{key='activeWhatsAppChat:'+window.id;const v=await chrome.storage.local.get(key);if(active)setChat(v[key]);});
-  const listener=(changes,area)=>{if(active&&key&&area==='local'&&changes[key])setChat(changes[key].newValue);};
-  chrome.storage.onChanged.addListener(listener);return()=>{active=false;chrome.storage.onChanged.removeListener(listener);};
+  if(!isPanel)return;
+  return panelBridge.subscribe(value=>{setChat(value);setOperator(localStore.getItem('ana.operator')||'');});
  },[]);
  useEffect(()=>{
-  if(!loaded||!chat)return;
+  if(!loaded)return;
+  if(!chat?.rawTitle){if(matched.current){matched.current='';setSelected('');}return;}
   const key=`${chat.tabId}:${chat.rawTitle}`;if(matched.current===key)return;matched.current=key;
   const matches=matchChat(data.spaces,chat.rawTitle);setSelected(matches.length===1?matches[0].id:'');setView('Directorio');
  },[chat,data.spaces,loaded]);
@@ -74,19 +75,19 @@ export default function App(){
   catch(e){notify(e.message,true);return false;}finally{mutation.current=false;setBusy(false);}
  }
  function login(value){setSession({base:value.base,token:value.token});setData(value.data);setLoaded(true);setOnline(true);setLastSync(new Date());}
- function logout(){sessionStorage.removeItem('ana.token');setSession(null);setLoaded(false);setData(empty);setSelected('');setMessage(null);matched.current='';}
- if(!session)return <Login onLogin={login}/>;
+ function logout(){sessionStore.removeItem('ana.token');setSession(null);setLoaded(false);setData(empty);setSelected('');setMessage(null);matched.current='';}
+ if(!session)return <><VersionNotice/>{!sessionStore.persistent&&<div className="storage-notice" role="status">El navegador limita el almacenamiento de este panel. Puedes trabajar durante esta sesión; al recargar tendrás que ingresar el token de nuevo. También puedes abrir el CRM en una pestaña.</div>}<Login onLogin={login}/></>;
  const filtered=filterSpaces(data,search,tray,operator).filter(s=>(!directoryUnit||s.org_unit===directoryUnit)&&(!directoryOwner||s.assignees.includes(directoryOwner))),pending=data.tasks.filter(t=>!t.done).length;
  function openSpace(id){setSelected(id);setView('Directorio');if(!data.spaces.some(s=>s.id===id))load();}
  const navigation=[['Directorio','users'],['Tareas','check'],['Agenda','calendar'],['Kanban','grid'],['Centro de datos','database']];
- return <div className={`app ${isExtension?'extension-mode':''} ${space&&view==='Directorio'?'has-selection':''}`}>
+ return <><VersionNotice/><div className={`app ${isPanel?'extension-mode':''} ${space&&view==='Directorio'?'has-selection':''}`}>
  <aside className="sidebar"><a className="brand" href="#" onClick={e=>{e.preventDefault();setView('Directorio');}}><AnaLogo/><span className="brand-caption">COORDINACIÓN INSTITUCIONAL</span></a><div className="workspace-label">ESPACIO DE TRABAJO</div><nav aria-label="Navegación principal">{navigation.map(([label,icon])=><button key={label} className={view===label?'active':''} onClick={()=>{setView(label);setSelected('');}}><Icon name={icon}/>{label}{label==='Directorio'&&<span>{data.spaces.length}</span>}</button>)}</nav><div className="sidebar-note"><span className="live-dot"/><strong>Una agenda, todo el equipo</strong><p>Coordina con trazabilidad, incluso fuera de la oficina.</p></div><footer><span>ANA · MIDAGRI</span><small>Coordinación institucional</small></footer></aside>
- <div className="workspace"><header className="topbar"><div className="compact-brand"><AnaLogo/><span>COORDINACIÓN<br/>INSTITUCIONAL</span></div><div className="breadcrumb">Agenda cloud <span>/</span> <strong>{view}</strong></div><div className="operator"><Icon name="users" size={17}/><label htmlFor="operator">¿Quién opera esta PC?</label><select id="operator" aria-label="¿Quién opera esta PC?" disabled={!loaded} value={operator} onChange={e=>{setOperator(e.target.value);localStorage.setItem('ana.operator',e.target.value);}}><option value="">Elegir operador</option>{data.members.map(m=><option key={m}>{m}</option>)}</select><button className="icon-btn notice-bell" aria-label={`Avisos internos (${unread} sin leer)`} title="Avisos internos y recordatorios" disabled={!operator} onClick={()=>setNoticesOpen(true)}><Icon name="bell" size={18}/>{unread>0&&<span className="unread-count">{unread>99?'99+':unread}</span>}</button><button className="icon-btn" aria-label="Agregar o administrar operadores" title="Agregar o administrar operadores" disabled={!operator||!loaded||busy} onClick={()=>setTeamOpen(true)}><Icon name="plus" size={17}/></button><button className="icon-btn" aria-label="Cerrar sesión" onClick={logout}><Icon name="logout" size={17}/></button></div></header>
+ <div className="workspace"><header className="topbar"><div className="compact-brand"><AnaLogo/><span>COORDINACIÓN<br/>INSTITUCIONAL</span></div><div className="breadcrumb">Agenda cloud <span>/</span> <strong>{view}</strong></div><div className="operator"><Icon name="users" size={17}/><label htmlFor="operator">¿Quién opera esta PC?</label><select id="operator" aria-label="¿Quién opera esta PC?" disabled={!loaded} value={operator} onChange={e=>{setOperator(e.target.value);localStore.setItem('ana.operator',e.target.value);panelBridge?.savePreferences({operator:e.target.value});}}><option value="">Elegir operador</option>{data.members.map(m=><option key={m}>{m}</option>)}</select><button className="icon-btn notice-bell" aria-label={`Avisos internos (${unread} sin leer)`} title="Avisos internos y recordatorios" disabled={!operator} onClick={()=>setNoticesOpen(true)}><Icon name="bell" size={18}/>{unread>0&&<span className="unread-count">{unread>99?'99+':unread}</span>}</button><button className="icon-btn" aria-label="Agregar o administrar operadores" title="Agregar o administrar operadores" disabled={!operator||!loaded||busy} onClick={()=>setTeamOpen(true)}><Icon name="plus" size={17}/></button><button className="icon-btn" aria-label="Cerrar sesión" onClick={logout}><Icon name="logout" size={17}/></button></div></header>
  <nav className="mobile-nav" aria-label="Vistas">{navigation.map(([label,icon])=><button key={label} className={view===label?'active':''} onClick={()=>{setView(label);setSelected('');}}><Icon name={icon} size={17}/>{label}</button>)}</nav>
  <div className="sync-line"><span className={`live-dot ${online?'':'offline'}`}/>{online?'Sincronizado':'Sin conexión confirmada'}{lastSync&&<time> · {lastSync.toLocaleTimeString('es-PE',{timeZone:'America/Lima',hour:'2-digit',minute:'2-digit'})}</time>}<button onClick={load}>Actualizar</button>{!presenceOk&&space&&<span className="warning-text">Presencia sin actualizar: no se puede confirmar quién está viendo.</span>}</div>
  {!operator&&<div className="operator-prompt">Selecciona «¿Quién opera esta PC?» para registrar notas, tareas y acuerdos con tu nombre.</div>}
  {message&&<div role={message.error?'alert':'status'} className={`toast ${message.error?'error':'success'}`}><span>{message.text}</span><button className="icon-btn" aria-label="Cerrar aviso" onClick={()=>setMessage(null)}><Icon name="close" size={16}/></button></div>}
- {isExtension&&chat?.rawTitle&&<div className="chat-context"><small>CHAT DE WHATSAPP</small><strong>{chat.rawTitle}</strong>{matchChat(data.spaces,chat.rawTitle).length!==1&&<><p>No hay una coincidencia única. Elige un espacio del directorio o crea uno.</p><Button kind="secondary" disabled={!operator} onClick={()=>setSpaceForm({name:chat.rawTitle,phone_or_group_id:/^\+?[\d\s().-]{7,25}$/.test(chat.rawTitle)?chat.rawTitle:''})}>Crear espacio para este chat</Button></>}</div>}
+ {isPanel&&chat?.rawTitle&&<div className="chat-context"><small>CHAT DE WHATSAPP</small><strong>{chat.rawTitle}</strong>{matchChat(data.spaces,chat.rawTitle).length!==1&&<><p>No hay una coincidencia única. Elige un espacio del directorio o crea uno.</p><Button kind="secondary" disabled={!operator} onClick={()=>setSpaceForm({name:chat.rawTitle,phone_or_group_id:/^\+?[\d\s().-]{7,25}$/.test(chat.rawTitle)?chat.rawTitle:''})}>Crear espacio para este chat</Button></>}</div>}
  {view==='Tareas'?<TaskBoard data={data} operator={operator} busy={busy} act={act} onOpenSpace={openSpace}/>:view==='Agenda'?<CalendarView data={data} onOpenSpace={openSpace}/>:view==='Centro de datos'?<DataCenter data={data} session={session} operator={operator} notify={notify} onReload={load}/>:<main className="main-content"><header className="page-heading"><div><p className="eyebrow">CONTACTOS QUE CONECTAN. GESTIONES QUE AVANZAN.</p><h1>{view==='Kanban'?'Tablero de coordinación':'Directorio de espacios'}</h1><p>El contexto de cada contacto, al alcance de todo el equipo.</p></div><Button disabled={!operator||busy} onClick={()=>setSpaceForm({})}><Icon name="plus" size={18}/>Nuevo espacio</Button></header>
  <div className="kpis"><div><span>Espacios activos</span><strong>{data.spaces.filter(s=>s.status!=='Cerrado').length}</strong><small>Agenda compartida</small></div><div><span>Coordinaciones urgentes</span><strong className="urgent-text">{data.spaces.filter(s=>s.status==='Urgente').length}</strong><small>Requieren atención</small></div><div><span>Tareas por completar</span><strong>{pending}</strong><small>En todo el equipo</small></div><div><span>Para visto bueno</span><strong>{data.spaces.filter(s=>s.status==='Para V°B°').length}</strong><small>Pendientes de revisión</small></div></div>
  <div className="toolbar"><div className="search"><Icon name="search" size={19}/><input aria-label="Buscador global" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar contacto, CUT, teléfono, nota o tarea"/>{search&&<button aria-label="Limpiar búsqueda" onClick={()=>setSearch('')}>×</button>}</div><span>{filtered.length} espacios</span></div>
@@ -101,5 +102,5 @@ export default function App(){
  <NotificationCenter session={session} operator={operator} data={data} act={act} busy={busy} open={noticesOpen} onClose={closing=>setNoticesOpen(!closing)} composeFor={noticeDraft} onComposeClose={()=>setNoticeDraft(null)} onUnread={setUnread} onOpenSpace={openSpace}/>
  {spaceForm&&<SpaceForm initial={spaceForm} members={data.members} busy={busy} onSave={p=>act('UPSERT_SPACE',p)} onClose={()=>setSpaceForm(null)}/>}
  {teamOpen&&<Modal title="Operadores del equipo" onClose={()=>setTeamOpen(false)}><p className="muted">Los cambios se comparten con todas las PC. Reasigna primero los espacios y tareas pendientes antes de eliminar un operador.</p><div className="team-list">{data.members.map(m=><div key={m}><Avatar name={m}/><strong>{m}</strong><Button kind="quiet" disabled={busy||data.members.length<2} onClick={()=>{if(confirm(`¿Eliminar a ${m} del equipo?`))act('UPDATE_MEMBERS',{members:data.members.filter(x=>x!==m)});}}>Eliminar</Button></div>)}</div><Form className="row" onSave={async(f,form)=>{if(await act('UPDATE_MEMBERS',{members:[...data.members,String(f.get('member')).trim()]}))form.reset();}}><Field label="Nombre del nuevo operador" name="member" required maxLength={80}/><Button disabled={busy}>Crear operador</Button></Form></Modal>}
- </div>;
+ </div></>;
 }

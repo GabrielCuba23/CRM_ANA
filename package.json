@@ -1,6 +1,6 @@
 {
   "name": "crm-whatsapp-ana",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,7 +16,8 @@
     "package": "python3 scripts/package.py",
     "deploy": "npm run build && wrangler pages deploy dist --project-name crm-whatsapp-ana",
     "test:workspace": "node tests/workspace.integration.mjs && node tests/workspace.browser.mjs",
-    "powerbi:generate": "python3 scripts/create-powerbi.py"
+    "powerbi:generate": "python3 scripts/create-powerbi.py",
+    "test:panel": "node tests/panel.browser.mjs"
   },
   "dependencies": {
     "fflate": "0.8.3",

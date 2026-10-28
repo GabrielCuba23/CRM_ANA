@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {request,ApiError} from '../src/api.js';
+import {request,ApiError,hasPendingWrites} from '../src/api.js';
+test('identifica escrituras en curso para impedir recargar durante un guardado',async t=>{
+ let finish;t.mock.method(globalThis,'fetch',()=>new Promise(resolve=>{finish=()=>resolve(Response.json({ok:true}));}));
+ const saving=request('https://example.com','token-de-prueba','sync',{action:'ADD_NOTE'});
+ assert.equal(hasPendingWrites(),true);finish();await saving;assert.equal(hasPendingWrites(),false);
+});
 
 test('se recupera de una consulta HTML 503 y devuelve los datos del segundo intento',async t=>{
  let calls=0;

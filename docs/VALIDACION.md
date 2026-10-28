@@ -1,10 +1,10 @@
 # Validación de la entrega
 
-Verificado el 27 de octubre de 2026 en el entorno cloud, con Node 24.19.0 y Chromium 154.
+Verificado el 28 de octubre de 2026 en el entorno cloud, con Node 24.19.0 y Chromium 154.
 
 - Instalación repetible mediante `npm ci` con lockfile: completada.
 - Migraciones D1 locales iniciales y segunda ejecución sin cambios: completadas, sin pérdida de datos.
-- Compilación Vite y extensión autocontenida: completadas.
+- Compilación Vite y contenedor cloud: completadas.
 - 21 pruebas unitarias: aprobadas (búsqueda, identidad de contacto, minutas, copia JSON, libro Excel, manifiesto, service worker y actualización única de operadores con conservación del historial).
 - 17 escenarios API contra D1 local real de Wrangler: aprobados (autenticación, CRUD y conflictos, autoría, presencia, Power BI, respaldo, restauración, validaciones, altas/bajas persistentes de operadores y CORS).
 - Recorrido Playwright en navegador: aprobado (login erróneo/correcto, operador, alta de contacto, nota, tarea, casilla completada, reunión y acuerdos, minuta, firma, formato, dos PC con colisión, vista móvil, búsqueda global, Kanban, Excel real de cinco hojas, copia JSON y restauración).
@@ -51,3 +51,16 @@ El ZIP se prepara con Python y se comprueba con `ZipFile.testzip`. Excluye secre
 - Plantilla PBIP: verificados JSON, tablas TMDL, cinco páginas, relaciones, consultas y ZIP sin token. Su apertura real en Power BI Desktop de Windows queda pendiente.
 - WhatsApp permanece intacto, según la decisión expresa del usuario. No se inyectan nombres, filtros ni botones sobre sus mensajes.
 - Cero vulnerabilidades reportadas por npm audit tras instalar las dependencias de PDF/OOXML.
+
+## Actualización cloud 1.2.0
+
+- 24 pruebas unitarias aprobadas, incluidas verificación de origen/source/protocolo/nonce del puente, filtrado de preferencias, manifiesto acotado, títulos solo en memoria de sesión Chrome y contador de escrituras para recargas.
+- Los dos recorridos de navegador anteriores y los siete escenarios D1 ampliados vuelven a aprobar tras separar la interfaz.
+- Nuevo recorrido de navegador del contenedor cloud: origen ajeno rechazado, entrada por token sin URL, retirada de la sesión antigua del contenedor, contexto por ventana, coincidencia del contacto, limpieza al cerrar, migración del operador, aviso de versión sin descartar borrador, cancelación y confirmación de recarga, datos guardados conservados, preferencias sin campos privados, Excel descargable en iframe y ancho de 420 px sin desbordamiento.
+- Se comprueban los encabezados reales del servidor local: raíz no enmarcable, panel solo enmarcable por extensiones, ruta HTML canónica, descriptor sin caché y 404 para rutas inexistentes.
+- La prueba de contenedor usa APIs Chrome simuladas y un padre HTTP de prueba. Solo en ese arnés se retira frame-ancestors para embeber la web; se comprueba por separado la política real y se simula el origen de mensaje chrome-extension. No equivale a cargar una extensión real.
+- El navegador del entorno bloquea almacenamiento de terceros en ese marco HTTP: se verifica la alternativa en memoria y el retorno del operador mediante el puente. No se elude esa política. El token permanece en el contexto web y puede requerir reingreso tras recargar en este modo.
+- Los scripts privilegiados están en el paquete; no se incluyen React, reportes ni módulos remotos en el contexto de extensión. El iframe HTTPS tiene sandbox y no puede invocar comandos arbitrarios de Chrome.
+- Se preparan iconos 16/32/48/128, ficha, privacidad pública y guía de publicación No listada. No se ha enviado a revisión ni publicado en Chrome Web Store. La revisión puede requerir cuenta y acceso de prueba aislado, que debe configurar el administrador.
+
+La instalación real de 1.2.0, el almacenamiento del iframe con permisos reales de extensión, WhatsApp real y la implementación remota Pages se verifican en el Chrome y la cuenta del administrador. Las pruebas locales no afirman esa validación externa.

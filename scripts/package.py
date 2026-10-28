@@ -1,15 +1,26 @@
 from pathlib import Path
 import hashlib
+import json
 import re
 import zipfile
 
 root = Path(__file__).resolve().parents[1]
 output = root / 'artifacts' / 'crm-whatsapp-ana-completo.zip'
 output.parent.mkdir(exist_ok=True)
-required = ['dist/index.html', 'extension-dist/manifest.json', 'package-lock.json', 'README.md', 'public/powerbi/CRM_ANA_PowerBI.pbip.zip', 'public/docs/revision-15-funciones.html']
+required = ['dist/index.html', 'dist/panel.html', 'dist/version.json', 'extension-dist/manifest.json', 'extension-dist/shell.js', 'extension-dist/icons/icon-128.png', 'package-lock.json', 'README.md', 'public/powerbi/CRM_ANA_PowerBI.pbip.zip', 'public/docs/revision-15-funciones.html', 'store/FICHA_TIENDA.md']
 for name in required:
     if not (root / name).is_file():
         raise SystemExit('Falta ' + name + '. Ejecuta npm ci y npm run build antes de empaquetar.')
+inputs = ['src','shared','extension','public','server','functions','migrations','package.json','package-lock.json','index.html','panel.html','vite.config.js','scripts/build-extension.mjs','scripts/build-fingerprint.mjs']
+sources = []
+for name in inputs:
+    path = root / name
+    sources.extend(path.rglob('*') if path.is_dir() else [path])
+fingerprint = hashlib.sha256()
+for path in sorted((p for p in sources if p.is_file()), key=lambda p: p.relative_to(root).as_posix()):
+    fingerprint.update((path.relative_to(root).as_posix() + '\0' + hashlib.sha256(path.read_bytes()).hexdigest() + '\n').encode())
+if json.loads((root / 'dist/version.json').read_text()).get('sourceHash') != fingerprint.hexdigest():
+    raise SystemExit('La compilación no corresponde al código actual. Ejecuta npm run build correctamente antes de empaquetar.')
 template = root / 'powerbi' / 'CRM_ANA.SemanticModel' / 'definition' / 'expressions.tmdl'
 if not re.search(r'^expression pTeamToken = "" meta', template.read_text(), re.M):
     raise SystemExit('El proyecto Power BI tiene parámetros privados modificados. Restaura la plantilla sin token antes de empaquetar.')

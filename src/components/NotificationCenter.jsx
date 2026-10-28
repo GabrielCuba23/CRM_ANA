@@ -1,9 +1,10 @@
+import {localStore} from '../storage.js';
 import React,{useCallback,useEffect,useRef,useState} from 'react';
 import {request} from '../api.js';
 import {remindersFor} from '../../shared/planning.js';
 import {Button,Field,Form,Modal,Stamp,Empty} from './UI.jsx';
 
-function storedDismissals(operator){try{return JSON.parse(localStorage.getItem('ana.reminders.'+operator)||'[]');}catch{return [];}}
+function storedDismissals(operator){try{return JSON.parse(localStore.getItem('ana.reminders.'+operator)||'[]');}catch{return [];}}
 export default function NotificationCenter({session,operator,data,act,busy,open,onClose,composeFor,onComposeClose,onUnread,onOpenSpace}){
  const [inbox,setInbox]=useState({received:[],sent:[],unread:0}),[tab,setTab]=useState('Recibidos'),[error,setError]=useState('');
  const [latest,setLatest]=useState(null),[reminders,setReminders]=useState([]),[dismissed,setDismissed]=useState([]);
@@ -26,7 +27,7 @@ export default function NotificationCenter({session,operator,data,act,busy,open,
  },[operator,refresh,onUnread]);
  useEffect(()=>{const check=()=>setReminders(remindersFor(data,operator));check();const timer=setInterval(check,30000);return()=>clearInterval(timer);},[data,operator]);
  const visible=reminders.filter(r=>!dismissed.includes(r.id));
- function dismiss(id){const next=[...dismissed,id].slice(-500);setDismissed(next);localStorage.setItem('ana.reminders.'+operator,JSON.stringify(next));}
+ function dismiss(id){const next=[...dismissed,id].slice(-500);setDismissed(next);localStore.setItem('ana.reminders.'+operator,JSON.stringify(next));}
  async function acknowledge(action,n){if(await act(action,{id:n.id})){if(latest?.id===n.id)setLatest(null);await refresh();}}
  return <>
  {latest&&!open&&<aside className="notice-popup" role="status"><strong>{latest.sender} te envió un aviso</strong><p>{latest.content}</p><div className="row"><Button kind="secondary" onClick={()=>{setTab('Recibidos');onClose(false);}}>Ver avisos</Button><Button kind="quiet" onClick={()=>setLatest(null)}>Cerrar</Button></div></aside>}

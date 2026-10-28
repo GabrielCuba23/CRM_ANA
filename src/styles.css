@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.release-banner{position:sticky;top:0;z-index:110;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:10px 16px;background:#fff3c4;color:#654b00;font-size:12px;line-height:1.5}.release-banner button{flex-shrink:0;background:#2957a4;color:white;border:0;border-radius:5px;padding:8px 12px}.startup-error{max-width:520px;padding:30px;margin:30px auto;display:grid;gap:16px;line-height:1.6}.startup-error button{padding:10px}
 
 :root{--ana-blue:#2957a4;--ana-blue-hover:#234989;--ana-navy:#17345e;--ana-surface:#f3f6fc;--ana-border:#dce4f2;--ana-muted:#526789;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#212c40;background:#f2f4f9;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;font-size:14px}
 
@@ -483,3 +484,5 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .extension-mode .mobile-nav{overflow-x:auto;justify-content:flex-start;scrollbar-width:thin}.extension-mode .mobile-nav button{flex:0 0 auto;white-space:nowrap}
 
 .directory-filters{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 16px;max-width:650px}.directory-filters .field{min-width:140px}.has-selection .directory-filters{display:none}@media(max-width:600px){.directory-filters .field{min-width:130px}}
+
+.storage-notice{padding:12px 16px;background:#fff3c4;color:#654b00;font-size:12px;line-height:1.6}

@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>CRM ANA · Panel cloud</title><link rel="stylesheet" href="shell.css"></head>
+<body>
+ <header class="shell-bar"><span>CRM ANA <small id="connection">Conectando</small></span><nav aria-label="Controles del panel"><a href="https://crm-whatsapp-ana.pages.dev" target="_blank" rel="noreferrer" title="Abrir CRM en una pestaña">Abrir ↗</a><button id="reload" type="button" title="Recargar el CRM">Recargar</button></nav></header>
+ <main id="loading" role="status"><img src="ana-logo.png" alt="Autoridad Nacional del Agua"><h1>Conectando con tu CRM</h1><p id="explanation">La aplicación se carga desde Cloudflare. Tus datos siguen guardados en la nube.</p><button id="retry" type="button" hidden>Volver a intentar</button><a href="https://crm-whatsapp-ana.pages.dev" target="_blank" rel="noreferrer">Abrir en el navegador ↗</a></main>
+ <iframe id="crm" title="CRM y agenda de coordinación institucional ANA" sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-downloads allow-popups allow-popups-to-escape-sandbox" allow="clipboard-write https://crm-whatsapp-ana.pages.dev" referrerpolicy="no-referrer" hidden></iframe>
+ <script type="module" src="shell.js"></script>
+</body></html>

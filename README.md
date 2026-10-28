@@ -1,6 +1,6 @@
 # CRM & Agenda Cloud de Coordinación Institucional ·
 
-Aplicación React + Tailwind para navegador y Chrome Side Panel, Pages Functions y D1. El mismo repositorio construye la web en `dist/` y una extensión Manifest V3 autocontenida en `extension-dist/`. No requiere el celular maestro para gestionar contactos. No es un producto oficial de ANA ni de Meta.
+Aplicación React + Tailwind para navegador y Chrome Side Panel, Pages Functions y D1. El mismo repositorio construye la web en `dist/` y una extensión Manifest V3 ligera en `extension-dist/`, que muestra la aplicación HTTPS aislada de Cloudflare. No requiere el celular maestro para gestionar contactos. No es un producto oficial de ANA ni de Meta.
 
 ## Versión 1.1.0: revisión del alcance
 
@@ -52,14 +52,14 @@ No hay identificadores de cuenta, tokens ni UUID de base inventados en los archi
 
 **Las Pages Functions deben compilarse y desplegarse desde el repositorio con Wrangler o la integración Git. Subir únicamente `dist` con arrastrar y soltar no instala la API.**
 
-Si agregas un dominio personalizado, el navegador usa automáticamente ese mismo origen para `/api`. La extensión permite autorizar expresamente ese dominio HTTPS al iniciar sesión, sin conceder acceso permanente a todos los sitios. `ALLOWED_ORIGINS` es opcional y acepta orígenes adicionales separados por comas; la web del mismo origen y los orígenes Chrome Extension ya se admiten. No se usa CORS `*`.
+Si agregas un dominio personalizado, el navegador usa automáticamente ese mismo origen para `/api`. La extensión 1.2.0 apunta exclusivamente a `https://crm-whatsapp-ana.pages.dev`; un dominio distinto requiere configurar y publicar otra versión del contenedor con ese origen exacto en manifiesto, protocolo, HTML y política de permisos del iframe. No acepta URLs arbitrarias. `ALLOWED_ORIGINS` es opcional y acepta orígenes adicionales separados por comas; la web del mismo origen y los orígenes Chrome Extension ya se admiten. No se usa CORS `*`.
 
 ## Instalar el modo oficina
 
 1. Compila con `npm run build` o usa `extension-dist/` del ZIP entregado.
 2. En Chrome abre el administrador de extensiones, activa modo desarrollador y usa **Cargar descomprimida**, seleccionando `extension-dist/`.
 3. Fija la extensión, abre WhatsApp Web y pulsa el icono CRM ANA para abrir el Side Panel.
-4. Introduce la URL de tu Pages (solo el origen HTTPS, sin `/api`) y el token de equipo. Autoriza el acceso únicamente a ese origen cuando Chrome lo solicite.
+4. El panel carga automáticamente el CRM de Cloudflare. Introduce únicamente el token del equipo. La sesión anterior de la extensión local no se transfiere; el token nunca cruza el puente.
 5. Elige «¿Quién opera esta PC?». Ajusta manualmente el ancho del panel entre 380 y 450 px; Chrome administra el ancho y no permite fijarlo desde el manifiesto.
 
 El lector solo observa `#main header` y transmite el texto del título. No agrega botones, no cambia atributos, no escribe chats, no lee la lista de mensajes ni envía mensajes. La API de WhatsApp no forma parte del proyecto. La detección depende del DOM disponible: si Meta cambia el encabezado, puede dejar de detectar; el directorio manual sigue disponible.
@@ -70,7 +70,13 @@ Los teléfonos se normalizan quitando espacios y signos, sin inventar prefijos i
 
 ## Actualizar la extensión
 
-La versión 1.1.0 incluye la recuperación de sincronización de 1.0.1 y las funciones descritas en la revisión de alcance. Además del ZIP completo, `npm run package` genera `artifacts/crm-ana-extension.zip`, que contiene directamente `manifest.json`, `index.html`, los scripts y `assets/`. Para una instalación nueva, descomprime ese ZIP y selecciona su carpeta en «Cargar descomprimida». Para actualizar una instalación conservando su configuración, cierra el panel, sustituye los archivos de su carpeta por los del ZIP nuevo y pulsa el botón de recarga de la extensión en el administrador de Chrome. La tarjeta debe mostrar versión 1.1.0. La web se actualiza mediante el despliegue de Pages; los archivos de una extensión descomprimida se actualizan en cada PC.
+La versión 1.2.0 separa el CRM web del contenedor. Instálala **una vez en cada PC**: cierra el panel, sustituye los archivos de su carpeta por el ZIP nuevo y pulsa **Recargar** en `chrome://extensions`. La tarjeta debe mostrar 1.2.0. Recarga también WhatsApp Web para activar el lector nuevo. Elige tu operador y vuelve a ingresar el token en el sitio Cloudflare. Los registros D1 no cambian.
+
+Después, los cambios de React, estilos, reportes y API se publican en GitHub y se despliegan en Pages; no requieren repartir ZIPs nuevos. Al abrir el panel se carga el despliegue actual. Si ya estaba abierto, consulta la versión cada minuto y al volver a la pestaña; muestra **Actualizar CRM**. El aviso no recarga automáticamente ni descarta borradores; el usuario guarda y confirma la recarga. Las escrituras pendientes impiden recargar mediante ese botón. El control **Recargar** del contenedor pide confirmar antes de recargar manualmente.
+
+Los cambios de permisos, scripts de WhatsApp, puente o dominio del contenedor sí necesitan una versión de extensión. Para distribuir esas versiones automáticamente, publica el ZIP como **No listada** en Chrome Web Store y usa su enlace de instalación en cada PC. Las instalaciones descomprimidas no se convierten automáticamente en instalaciones de tienda. La publicación y aprobación no se han realizado por el hecho de generar el ZIP.
+
+Consulta [guía completa de actualización y publicación](docs/ACTUALIZACIONES_CLOUD.md) y [ficha preparada para la tienda](store/FICHA_TIENDA.md). La política de privacidad está en `/privacy.html` del sitio. El paquete incluye iconos PNG de 16, 32, 48 y 128 px y un manifiesto con solo dos permisos y dos orígenes exactos.
 
 Las consultas fallidas por red o errores temporales se reintentan una sola vez; no se superponen consultas de sincronización. Al recuperarse la lectura, se retira el aviso correspondiente. Los guardados no se reintentan automáticamente ni se consideran confirmados por una lectura posterior. Si el servidor devuelve HTML en vez de JSON, el aviso muestra el código HTTP y una indicación para comprobar la conexión o la configuración.
 
@@ -83,7 +89,7 @@ En una base ya existente, la API actualiza la lista una sola vez al recibir una 
 ## Operación del equipo
 
 - El token compartido autentica al **equipo**. El selector identifica al operador por declaración y no es una identidad criptográficamente verificada. Cualquier poseedor del token tiene acceso total, incluida restauración. Este modelo cumple acceso maestro compartido, pero no reemplaza permisos individuales, MFA ni auditoría inalterable.
-- El token vive en `sessionStorage` del navegador/panel, no se incluye en respaldos ni en el ZIP. El operador, ID de dispositivo, firma y origen API se conservan en `localStorage`. Cerrar sesión borra el token; cerrar la sesión del navegador puede requerir volver a ingresarlo. Cambiar `TEAM_TOKEN` en Pages y volver a desplegar revoca el acceso del token anterior.
+- El token vive en `sessionStorage` de la página HTTPS del CRM, tanto en navegador como dentro del panel, no se incluye en respaldos ni en el ZIP. El operador, ID de dispositivo, firma y origen API se conservan en `localStorage`. Cerrar sesión borra el token; cerrar la sesión del navegador puede requerir volver a ingresarlo. Cambiar `TEAM_TOKEN` en Pages y volver a desplegar revoca el acceso del token anterior.
 - Cada pestaña/panel tiene un identificador de sesión y cada perfil de navegador un identificador de dispositivo. Dos perfiles en la misma máquina pueden aparecer como dos PC. Los latidos son cada 4 segundos y expiran a los 15 segundos. No son bloqueos de edición. Se informa cuando no se puede actualizar la presencia.
 - El estado de la agenda se refresca cada 12 segundos y después de cada escritura. La detección de colisión usa un endpoint independiente que devuelve solo presencia, sin descargar toda la base cada cuatro segundos.
 - Los espacios verifican su fecha de actualización para evitar sobrescribir una edición concurrente. Una nota también actualiza el espacio. Ante conflicto actualiza y vuelve a abrir el formulario. Tareas, reuniones y formatos usan última escritura; la cinta de presencia avisa del trabajo paralelo.
@@ -148,13 +154,13 @@ npm audit
 npm run package
 ```
 
-Las pruebas de integración y navegador crean bases locales aisladas. Nunca apuntan al D1 remoto. Para las pruebas de navegador instala Chromium o ejecuta `npx playwright install chromium`; puedes definir `CHROMIUM_PATH` con la ruta del ejecutable. Las capturas se guardan en `artifacts/`. Las pruebas verifican el manifiesto, el service worker en un runtime simulado y el lector pasivo en un DOM de navegador simulado. La política administrativa de Chromium en este entorno impide cargar extensiones descomprimidas. La carga real de Manifest V3, WhatsApp real, el ancho del Side Panel y la autorización interactiva del dominio quedan para verificación manual en tu Chrome.
+Las pruebas de integración y navegador crean bases locales aisladas. Nunca apuntan al D1 remoto. Para las pruebas de navegador instala Chromium o ejecuta `npx playwright install chromium`; puedes definir `CHROMIUM_PATH` con la ruta del ejecutable. Las capturas se guardan en `artifacts/`. Las pruebas verifican el manifiesto, el service worker en un runtime simulado y el lector pasivo en un DOM de navegador simulado. La política administrativa de Chromium en este entorno impide cargar extensiones descomprimidas. La carga real de Manifest V3, WhatsApp real, el ancho del Side Panel y la aislamiento del iframe y persistencia del almacenamiento HTTPS quedan para verificación manual en tu Chrome.
 
 `npm run package` usa Python `zipfile`, incluye fuente, lockfile, documentación, web compilada y extensión compilada; excluye Git, secretos, bases de desarrollo, caches y dependencias. Produce `artifacts/crm-whatsapp-ana-completo.zip`. Descomprime y sube el contenido de la carpeta raíz a GitHub. No subas `.dev.vars` ni `wrangler.local.toml`.
 
 ## Identidad visual
 
-Se utiliza el logo original de ANA entregado por el usuario, conservado sin modificaciones en `src/assets/ana-logo.png`. El componente `AnaLogo` lo muestra en la barra lateral, el acceso y la cabecera de móvil/panel lateral. Vite incluye la imagen local en la web y en la extensión. La paleta usa el azul `#2957A4`, obtenido del propio archivo, con superficies blancas y azul oscuro para navegación. Los estados y las alertas conservan sus colores semánticos.
+Se utiliza el logo original de ANA entregado por el usuario, conservado sin modificaciones en `src/assets/ana-logo.png`. El componente `AnaLogo` lo muestra en la barra lateral, el acceso y la cabecera de móvil/panel lateral. Vite incluye la imagen en la web y el empaquetador copia el PNG original para la pantalla de conexión de la extensión. La paleta usa el azul `#2957A4`, obtenido del propio archivo, con superficies blancas y azul oscuro para navegación. Los estados y las alertas conservan sus colores semánticos.
 
 ## Estructura
 
@@ -168,7 +174,7 @@ Se utiliza el logo original de ANA entregado por el usuario, conservado sin modi
 - `server/api.js`, `server/validation.js`: autenticación, validación, SQL y restauración atómica.
 - `functions/api/[[path]].js`: entrada Pages Functions.
 - `migrations/`: esquema e índices no destructivos. La API crea las tablas adicionales 1.1.0 en una transacción idempotente al primer acceso autenticado; no requiere ejecutar SQL manual en una base anterior. No se alteran ni borran las tablas originales.
-- `extension/`: manifiesto, service worker y lector pasivo; se empaquetan sin código remoto.
+- `extension/`: manifiesto, service worker, lector pasivo y contenedor local. Los scripts privilegiados se empaquetan localmente; la aplicación HTTPS se muestra en un iframe con sandbox, sin acceso a las APIs de extensión.
 - `docs/CODIGO_REACT.md`: código íntegro de los componentes principales, para lectura.
 
 ## Límites operativos

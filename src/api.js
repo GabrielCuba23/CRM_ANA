@@ -1,4 +1,5 @@
-export const isExtension=globalThis.location?.protocol==='chrome-extension:';
+let pendingWrites=0;
+export function hasPendingWrites(){return pendingWrites>0;}
 export function apiOrigin(value){
  const url=new URL(value);
  if(url.protocol!=='https:' && !(url.protocol==='http:' && ['localhost','127.0.0.1'].includes(url.hostname)))throw new Error('La API requiere HTTPS; HTTP solo se permite en localhost.');
@@ -29,7 +30,12 @@ function pause(ms,signal){
   signal?.addEventListener('abort',abort,{once:true});
  });
 }
-export async function request(base,token,path,body,{signal}={}){
+export async function request(base,token,path,body,options={}){
+ const writing=body!==undefined&&path.split('?')[0]!=='presence';
+ if(writing)pendingWrites++;
+ try{return await requestData(base,token,path,body,options);}finally{if(writing)pendingWrites--;}
+}
+async function requestData(base,token,path,body,{signal}={}){
  const reading=body===undefined,resource=resourceName(path);
  for(let attempt=0;attempt<(reading?2:1);attempt++){
   signal?.throwIfAborted();

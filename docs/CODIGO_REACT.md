@@ -1,20 +1,24 @@
-# Código íntegro de los componentes principales · CRM ANA 1.1.0
+# Código íntegro de los componentes principales · CRM ANA 1.2.0
 
-Todos los archivos se muestran completos. El código ejecutable está en las rutas indicadas.
+Todos los archivos se muestran completos. El código ejecutable está en las rutas indicadas. La aplicación se publica en Pages; la extensión ligera está en extension/.
 
 ## src/main.jsx
 
 ```jsx
 import React from 'react';
 import {createRoot} from 'react-dom/client';
-import App from './App.jsx';
+import './panelBridge.js';
 import './styles.css';
-createRoot(document.getElementById('root')).render(<React.StrictMode><App/></React.StrictMode>);
+const root=createRoot(document.getElementById('root'));
+import('./App.jsx').then(({default:App})=>{
+ root.render(<React.StrictMode><App/></React.StrictMode>);
+}).catch(()=>root.render(<main className="startup-error"><h1>No se pudo abrir el CRM</h1><p>Comprueba la conexión y permite el almacenamiento del sitio. También puedes abrir el CRM en una pestaña del navegador.</p><a href={location.origin} target="_blank" rel="noreferrer">Abrir CRM en el navegador ↗</a><button onClick={()=>location.reload()}>Volver a intentar</button></main>));
 ```
 
 ## src/App.jsx
 
 ```jsx
+import {localStore,sessionStore} from './storage.js';
 import React,{useCallback,useEffect,useRef,useState} from 'react';
 import Login from './components/Login.jsx';
 import AnaLogo from './components/AnaLogo.jsx';
@@ -26,13 +30,15 @@ import NotificationCenter from './components/NotificationCenter.jsx';
 import DataCenter from './components/DataCenter.jsx';
 import {Avatar,Badge,Button,Empty,Field,Form,Icon,Modal} from './components/UI.jsx';
 import {filterSpaces,matchChat,STATUSES,UNITS} from '../shared/domain.js';
-import {isExtension,request} from './api.js';
+import {request} from './api.js';
+import {isPanel,panelBridge} from './panelBridge.js';
+import VersionNotice from './components/VersionNotice.jsx';
 const empty={spaces:[],notes:[],tasks:[],meetings:[],templates:[],members:[],notifications:[],agreement_tasks:[]};
 function storedId(key,storage){let id=storage.getItem(key);if(!id){id=crypto.randomUUID();storage.setItem(key,id);}return id;}
-const device=storedId('ana.device',localStorage),pc=storedId('ana.tab',sessionStorage);
-function initialSession(){const token=sessionStorage.getItem('ana.token'),base=isExtension?localStorage.getItem('ana.api'):location.origin;return token&&base?{token,base}:null;}
+const device=storedId('ana.device',localStore),pc=storedId('ana.tab',sessionStore);
+function initialSession(){const token=sessionStore.getItem('ana.token'),base=location.origin;return token?{token,base}:null;}
 export default function App(){
- const [session,setSession]=useState(initialSession),[data,setData]=useState(empty),[loaded,setLoaded]=useState(false),[operator,setOperator]=useState(localStorage.getItem('ana.operator')||'');
+ const [session,setSession]=useState(initialSession),[data,setData]=useState(empty),[loaded,setLoaded]=useState(false),[operator,setOperator]=useState(localStore.getItem('ana.operator')||'');
  const [directoryUnit,setDirectoryUnit]=useState(''),[directoryOwner,setDirectoryOwner]=useState('');
  const [view,setView]=useState('Directorio'),[search,setSearch]=useState(''),[tray,setTray]=useState('Todos'),[selected,setSelected]=useState('');
  const [noticesOpen,setNoticesOpen]=useState(false),[noticeDraft,setNoticeDraft]=useState(null),[unread,setUnread]=useState(0);
@@ -60,16 +66,14 @@ export default function App(){
   const timer=setInterval(()=>{if(!mutation.current&&!syncInFlight.current)load();},12000);
   return()=>{clearInterval(timer);loadGeneration.current++;syncAbort.current?.abort();syncAbort.current=null;syncInFlight.current=false;};
  },[session,load]);
- useEffect(()=>{if(loaded&&operator&&!data.members.includes(operator)){setOperator('');localStorage.removeItem('ana.operator');}},[loaded,data.members,operator]);
+ useEffect(()=>{if(loaded&&operator&&!data.members.includes(operator)){setOperator('');localStore.removeItem('ana.operator');}},[loaded,data.members,operator]);
  useEffect(()=>{
-  if(!isExtension)return;
-  let active=true,key;
-  chrome.windows.getCurrent().then(async window=>{key='activeWhatsAppChat:'+window.id;const v=await chrome.storage.local.get(key);if(active)setChat(v[key]);});
-  const listener=(changes,area)=>{if(active&&key&&area==='local'&&changes[key])setChat(changes[key].newValue);};
-  chrome.storage.onChanged.addListener(listener);return()=>{active=false;chrome.storage.onChanged.removeListener(listener);};
+  if(!isPanel)return;
+  return panelBridge.subscribe(value=>{setChat(value);setOperator(localStore.getItem('ana.operator')||'');});
  },[]);
  useEffect(()=>{
-  if(!loaded||!chat)return;
+  if(!loaded)return;
+  if(!chat?.rawTitle){if(matched.current){matched.current='';setSelected('');}return;}
   const key=`${chat.tabId}:${chat.rawTitle}`;if(matched.current===key)return;matched.current=key;
   const matches=matchChat(data.spaces,chat.rawTitle);setSelected(matches.length===1?matches[0].id:'');setView('Directorio');
  },[chat,data.spaces,loaded]);
@@ -91,19 +95,19 @@ export default function App(){
   catch(e){notify(e.message,true);return false;}finally{mutation.current=false;setBusy(false);}
  }
  function login(value){setSession({base:value.base,token:value.token});setData(value.data);setLoaded(true);setOnline(true);setLastSync(new Date());}
- function logout(){sessionStorage.removeItem('ana.token');setSession(null);setLoaded(false);setData(empty);setSelected('');setMessage(null);matched.current='';}
- if(!session)return <Login onLogin={login}/>;
+ function logout(){sessionStore.removeItem('ana.token');setSession(null);setLoaded(false);setData(empty);setSelected('');setMessage(null);matched.current='';}
+ if(!session)return <><VersionNotice/>{!sessionStore.persistent&&<div className="storage-notice" role="status">El navegador limita el almacenamiento de este panel. Puedes trabajar durante esta sesión; al recargar tendrás que ingresar el token de nuevo. También puedes abrir el CRM en una pestaña.</div>}<Login onLogin={login}/></>;
  const filtered=filterSpaces(data,search,tray,operator).filter(s=>(!directoryUnit||s.org_unit===directoryUnit)&&(!directoryOwner||s.assignees.includes(directoryOwner))),pending=data.tasks.filter(t=>!t.done).length;
  function openSpace(id){setSelected(id);setView('Directorio');if(!data.spaces.some(s=>s.id===id))load();}
  const navigation=[['Directorio','users'],['Tareas','check'],['Agenda','calendar'],['Kanban','grid'],['Centro de datos','database']];
- return <div className={`app ${isExtension?'extension-mode':''} ${space&&view==='Directorio'?'has-selection':''}`}>
+ return <><VersionNotice/><div className={`app ${isPanel?'extension-mode':''} ${space&&view==='Directorio'?'has-selection':''}`}>
  <aside className="sidebar"><a className="brand" href="#" onClick={e=>{e.preventDefault();setView('Directorio');}}><AnaLogo/><span className="brand-caption">COORDINACIÓN INSTITUCIONAL</span></a><div className="workspace-label">ESPACIO DE TRABAJO</div><nav aria-label="Navegación principal">{navigation.map(([label,icon])=><button key={label} className={view===label?'active':''} onClick={()=>{setView(label);setSelected('');}}><Icon name={icon}/>{label}{label==='Directorio'&&<span>{data.spaces.length}</span>}</button>)}</nav><div className="sidebar-note"><span className="live-dot"/><strong>Una agenda, todo el equipo</strong><p>Coordina con trazabilidad, incluso fuera de la oficina.</p></div><footer><span>ANA · MIDAGRI</span><small>Coordinación institucional</small></footer></aside>
- <div className="workspace"><header className="topbar"><div className="compact-brand"><AnaLogo/><span>COORDINACIÓN<br/>INSTITUCIONAL</span></div><div className="breadcrumb">Agenda cloud <span>/</span> <strong>{view}</strong></div><div className="operator"><Icon name="users" size={17}/><label htmlFor="operator">¿Quién opera esta PC?</label><select id="operator" aria-label="¿Quién opera esta PC?" disabled={!loaded} value={operator} onChange={e=>{setOperator(e.target.value);localStorage.setItem('ana.operator',e.target.value);}}><option value="">Elegir operador</option>{data.members.map(m=><option key={m}>{m}</option>)}</select><button className="icon-btn notice-bell" aria-label={`Avisos internos (${unread} sin leer)`} title="Avisos internos y recordatorios" disabled={!operator} onClick={()=>setNoticesOpen(true)}><Icon name="bell" size={18}/>{unread>0&&<span className="unread-count">{unread>99?'99+':unread}</span>}</button><button className="icon-btn" aria-label="Agregar o administrar operadores" title="Agregar o administrar operadores" disabled={!operator||!loaded||busy} onClick={()=>setTeamOpen(true)}><Icon name="plus" size={17}/></button><button className="icon-btn" aria-label="Cerrar sesión" onClick={logout}><Icon name="logout" size={17}/></button></div></header>
+ <div className="workspace"><header className="topbar"><div className="compact-brand"><AnaLogo/><span>COORDINACIÓN<br/>INSTITUCIONAL</span></div><div className="breadcrumb">Agenda cloud <span>/</span> <strong>{view}</strong></div><div className="operator"><Icon name="users" size={17}/><label htmlFor="operator">¿Quién opera esta PC?</label><select id="operator" aria-label="¿Quién opera esta PC?" disabled={!loaded} value={operator} onChange={e=>{setOperator(e.target.value);localStore.setItem('ana.operator',e.target.value);panelBridge?.savePreferences({operator:e.target.value});}}><option value="">Elegir operador</option>{data.members.map(m=><option key={m}>{m}</option>)}</select><button className="icon-btn notice-bell" aria-label={`Avisos internos (${unread} sin leer)`} title="Avisos internos y recordatorios" disabled={!operator} onClick={()=>setNoticesOpen(true)}><Icon name="bell" size={18}/>{unread>0&&<span className="unread-count">{unread>99?'99+':unread}</span>}</button><button className="icon-btn" aria-label="Agregar o administrar operadores" title="Agregar o administrar operadores" disabled={!operator||!loaded||busy} onClick={()=>setTeamOpen(true)}><Icon name="plus" size={17}/></button><button className="icon-btn" aria-label="Cerrar sesión" onClick={logout}><Icon name="logout" size={17}/></button></div></header>
  <nav className="mobile-nav" aria-label="Vistas">{navigation.map(([label,icon])=><button key={label} className={view===label?'active':''} onClick={()=>{setView(label);setSelected('');}}><Icon name={icon} size={17}/>{label}</button>)}</nav>
  <div className="sync-line"><span className={`live-dot ${online?'':'offline'}`}/>{online?'Sincronizado':'Sin conexión confirmada'}{lastSync&&<time> · {lastSync.toLocaleTimeString('es-PE',{timeZone:'America/Lima',hour:'2-digit',minute:'2-digit'})}</time>}<button onClick={load}>Actualizar</button>{!presenceOk&&space&&<span className="warning-text">Presencia sin actualizar: no se puede confirmar quién está viendo.</span>}</div>
  {!operator&&<div className="operator-prompt">Selecciona «¿Quién opera esta PC?» para registrar notas, tareas y acuerdos con tu nombre.</div>}
  {message&&<div role={message.error?'alert':'status'} className={`toast ${message.error?'error':'success'}`}><span>{message.text}</span><button className="icon-btn" aria-label="Cerrar aviso" onClick={()=>setMessage(null)}><Icon name="close" size={16}/></button></div>}
- {isExtension&&chat?.rawTitle&&<div className="chat-context"><small>CHAT DE WHATSAPP</small><strong>{chat.rawTitle}</strong>{matchChat(data.spaces,chat.rawTitle).length!==1&&<><p>No hay una coincidencia única. Elige un espacio del directorio o crea uno.</p><Button kind="secondary" disabled={!operator} onClick={()=>setSpaceForm({name:chat.rawTitle,phone_or_group_id:/^\+?[\d\s().-]{7,25}$/.test(chat.rawTitle)?chat.rawTitle:''})}>Crear espacio para este chat</Button></>}</div>}
+ {isPanel&&chat?.rawTitle&&<div className="chat-context"><small>CHAT DE WHATSAPP</small><strong>{chat.rawTitle}</strong>{matchChat(data.spaces,chat.rawTitle).length!==1&&<><p>No hay una coincidencia única. Elige un espacio del directorio o crea uno.</p><Button kind="secondary" disabled={!operator} onClick={()=>setSpaceForm({name:chat.rawTitle,phone_or_group_id:/^\+?[\d\s().-]{7,25}$/.test(chat.rawTitle)?chat.rawTitle:''})}>Crear espacio para este chat</Button></>}</div>}
  {view==='Tareas'?<TaskBoard data={data} operator={operator} busy={busy} act={act} onOpenSpace={openSpace}/>:view==='Agenda'?<CalendarView data={data} onOpenSpace={openSpace}/>:view==='Centro de datos'?<DataCenter data={data} session={session} operator={operator} notify={notify} onReload={load}/>:<main className="main-content"><header className="page-heading"><div><p className="eyebrow">CONTACTOS QUE CONECTAN. GESTIONES QUE AVANZAN.</p><h1>{view==='Kanban'?'Tablero de coordinación':'Directorio de espacios'}</h1><p>El contexto de cada contacto, al alcance de todo el equipo.</p></div><Button disabled={!operator||busy} onClick={()=>setSpaceForm({})}><Icon name="plus" size={18}/>Nuevo espacio</Button></header>
  <div className="kpis"><div><span>Espacios activos</span><strong>{data.spaces.filter(s=>s.status!=='Cerrado').length}</strong><small>Agenda compartida</small></div><div><span>Coordinaciones urgentes</span><strong className="urgent-text">{data.spaces.filter(s=>s.status==='Urgente').length}</strong><small>Requieren atención</small></div><div><span>Tareas por completar</span><strong>{pending}</strong><small>En todo el equipo</small></div><div><span>Para visto bueno</span><strong>{data.spaces.filter(s=>s.status==='Para V°B°').length}</strong><small>Pendientes de revisión</small></div></div>
  <div className="toolbar"><div className="search"><Icon name="search" size={19}/><input aria-label="Buscador global" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar contacto, CUT, teléfono, nota o tarea"/>{search&&<button aria-label="Limpiar búsqueda" onClick={()=>setSearch('')}>×</button>}</div><span>{filtered.length} espacios</span></div>
@@ -118,7 +122,33 @@ export default function App(){
  <NotificationCenter session={session} operator={operator} data={data} act={act} busy={busy} open={noticesOpen} onClose={closing=>setNoticesOpen(!closing)} composeFor={noticeDraft} onComposeClose={()=>setNoticeDraft(null)} onUnread={setUnread} onOpenSpace={openSpace}/>
  {spaceForm&&<SpaceForm initial={spaceForm} members={data.members} busy={busy} onSave={p=>act('UPSERT_SPACE',p)} onClose={()=>setSpaceForm(null)}/>}
  {teamOpen&&<Modal title="Operadores del equipo" onClose={()=>setTeamOpen(false)}><p className="muted">Los cambios se comparten con todas las PC. Reasigna primero los espacios y tareas pendientes antes de eliminar un operador.</p><div className="team-list">{data.members.map(m=><div key={m}><Avatar name={m}/><strong>{m}</strong><Button kind="quiet" disabled={busy||data.members.length<2} onClick={()=>{if(confirm(`¿Eliminar a ${m} del equipo?`))act('UPDATE_MEMBERS',{members:data.members.filter(x=>x!==m)});}}>Eliminar</Button></div>)}</div><Form className="row" onSave={async(f,form)=>{if(await act('UPDATE_MEMBERS',{members:[...data.members,String(f.get('member')).trim()]}))form.reset();}}><Field label="Nombre del nuevo operador" name="member" required maxLength={80}/><Button disabled={busy}>Crear operador</Button></Form></Modal>}
- </div>;
+ </div></>;
+}
+```
+
+## src/components/Login.jsx
+
+```jsx
+import {localStore,sessionStore} from '../storage.js';
+import React,{useState} from 'react';
+import {request} from '../api.js';
+import {Button,Field,Icon} from './UI.jsx';
+import AnaLogo from './AnaLogo.jsx';
+export default function Login({onLogin}){
+ const [error,setError]=useState(''),[busy,setBusy]=useState(false);
+ async function login(e){
+  e.preventDefault();setBusy(true);setError('');
+  const f=new FormData(e.currentTarget);
+  try{
+   const base=location.origin,token=String(f.get('token')).trim();
+   const data=await request(base,token,'sync');
+   localStore.setItem('ana.api',base);sessionStore.setItem('ana.token',token);onLogin({base,token,data});
+  }catch(err){setError(err.message);}finally{setBusy(false);}
+ }
+ return <main className="login"><section className="login-card"><div className="login-brand"><AnaLogo/></div><p className="eyebrow">COORDINACIÓN INSTITUCIONAL · MIDAGRI</p><h1>El equipo conectado.<br/>La gestión, en orden.</h1><p>Agenda cloud, seguimiento de CUT y acuerdos en un solo lugar.</p><form onSubmit={login}>
+ <Field label="Token de acceso del equipo" name="token" type="password" minLength={24} maxLength={1024} required autoComplete="current-password"/>
+ {error&&<p className="error" role="alert">{error}</p>}<Button disabled={busy} type="submit">{busy?'Conectando':'Entrar al espacio de trabajo'}<Icon name="arrow"/></Button>
+ </form><small>Acceso compartido del equipo. Elige tu operador después de ingresar.</small></section><aside className="login-aside"><span>AGENDA CLOUD</span><h2>Cada coordinación<br/>tiene su espacio.</h2><p>Del primer contacto al último acuerdo.</p><div className="water-lines"/></aside></main>;
 }
 ```
 
@@ -131,54 +161,6 @@ import anaLogo from '../assets/ana-logo.png';
 export default function AnaLogo({className=''}) {
   return <img className={`ana-logo ${className}`} src={anaLogo}
     alt="ANA · Autoridad Nacional del Agua" width={929} height={412} decoding="async"/>;
-}
-```
-
-## src/components/UI.jsx
-
-```jsx
-import React,{useRef,useEffect,useId} from 'react';
-export function Icon({name,size=20}){
- const paths={bell:'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4',grid:'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',search:'M21 21l-5-5 M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',users:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M16 3a4 4 0 0 1 0 8 M22 21v-2a4 4 0 0 0-3-3.87 M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0',check:'M20 6L9 17l-5-5',plus:'M12 5v14 M5 12h14',arrow:'M5 12h14 M12 5l7 7-7 7',file:'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M8 13h8 M8 17h5',database:'M21 5c0 2.2-4 4-9 4S3 7.2 3 5s4-4 9-4 9 1.8 9 4z M3 5v14c0 2.2 4 4 9 4s9-1.8 9-4V5 M3 12c0 2.2 4 4 9 4s9-1.8 9-4',calendar:'M8 2v4 M16 2v4 M3 10h18 M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2',copy:'M9 9h12v12H9z M5 15H3V3h12v2',close:'M6 6l12 12 M6 18L18 6',settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M12 2v3 M12 19v3 M2 12h3 M19 12h3 M5 5l2 2 M17 17l2 2 M5 19l2-2 M17 7l2-2',download:'M12 3v12 M6 9l6 6 6-6 M3 16v5h18v-5',logout:'M9 3H3v18h6 M9 12h12 M15 6l6 6-6 6'};
- return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]||paths.file}/></svg>;
-}
-export function Button({children,kind='primary',className='',...props}){return <button className={`btn ${kind} ${className}`} {...props}>{children}</button>;}
-export function Field({label,children,...props}){const labelId=useId();return <label className="field"><span id={labelId}>{label}</span>{children?React.cloneElement(children,{'aria-labelledby':labelId}):<input {...props} aria-labelledby={labelId}/>}</label>;}
-export function Form({onSave,children,className=''}){return <form className={className} onSubmit={async e=>{e.preventDefault();await onSave(new FormData(e.currentTarget),e.currentTarget);}}>{children}</form>;}
-export function Modal({title,onClose,children}){
- const ref=useRef();useEffect(()=>{const el=ref.current;el.showModal();return()=>{el.close();};},[]);
- return <dialog ref={ref} className="modal" onCancel={onClose} onClick={e=>{if(e.target===ref.current)onClose();}}><div className="modal-head"><h2>{title}</h2><button className="icon-btn" aria-label="Cerrar diálogo" onClick={onClose}><Icon name="close"/></button></div>{children}</dialog>;
-}
-export function Empty({title,children}){return <div className="empty"><Icon name="file" size={30}/><h3>{title}</h3><p>{children}</p></div>;}
-export function Stamp({value}){return <time dateTime={value}>{new Date(value).toLocaleString('es-PE',{timeZone:'America/Lima',dateStyle:'medium',timeStyle:'short'})}</time>;}
-export function Badge({status}){return <span className={`badge status-${{'Urgente':'urgent','Pendiente':'pending','En elaboración':'working','Para V°B°':'review','Cerrado':'closed'}[status]}`}>{status}</span>;}
-export function Avatar({name}){return <span className="avatar" aria-label={name}>{name?.split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase()||'A'}</span>;}
-```
-
-## src/components/Login.jsx
-
-```jsx
-import React,{useState} from 'react';
-import {isExtension,apiOrigin,request} from '../api.js';
-import {Button,Field,Icon} from './UI.jsx';
-import AnaLogo from './AnaLogo.jsx';
-export default function Login({onLogin}){
- const [error,setError]=useState(''),[busy,setBusy]=useState(false);
- async function login(e){
-  e.preventDefault();setBusy(true);setError('');
-  const f=new FormData(e.currentTarget);
-  try{
-   const base=apiOrigin(isExtension?String(f.get('url')).trim():location.origin),token=String(f.get('token')).trim();
-   if(isExtension){const granted=await chrome.permissions.request({origins:[`${base}/*`]});if(!granted)throw new Error('Autoriza a la extensión a consultar tu dominio de Cloudflare.');}
-   const data=await request(base,token,'sync');
-   localStorage.setItem('ana.api',base);sessionStorage.setItem('ana.token',token);onLogin({base,token,data});
-  }catch(err){setError(err.message);}finally{setBusy(false);}
- }
- return <main className="login"><section className="login-card"><div className="login-brand"><AnaLogo/></div><p className="eyebrow">COORDINACIÓN INSTITUCIONAL · MIDAGRI</p><h1>El equipo conectado.<br/>La gestión, en orden.</h1><p>Agenda cloud, seguimiento de CUT y acuerdos en un solo lugar.</p><form onSubmit={login}>
- {isExtension&&<Field label="Dirección de tu aplicación Cloudflare Pages" type="url" name="url" required defaultValue={localStorage.getItem('ana.api')||''} autoComplete="url"/>}
- <Field label="Token de acceso del equipo" name="token" type="password" minLength={24} maxLength={1024} required autoComplete="current-password"/>
- {error&&<p className="error" role="alert">{error}</p>}<Button disabled={busy} type="submit">{busy?'Conectando':'Entrar al espacio de trabajo'}<Icon name="arrow"/></Button>
- </form><small>Acceso compartido del equipo. Elige tu operador después de ingresar.</small></section><aside className="login-aside"><span>AGENDA CLOUD</span><h2>Cada coordinación<br/>tiene su espacio.</h2><p>Del primer contacto al último acuerdo.</p><div className="water-lines"/></aside></main>;
 }
 ```
 
@@ -214,6 +196,8 @@ export default function SpaceForm({initial,members,onSave,onClose,busy}){
 ## src/components/SpaceDetail.jsx
 
 ```jsx
+import {localStore} from '../storage.js';
+import {panelBridge} from '../panelBridge.js';
 import React,{useState} from 'react';
 import {signedText,minuteText} from '../../shared/domain.js';
 import {clipboard} from '../api.js';
@@ -221,7 +205,7 @@ import TaskEditor from './TaskEditor.jsx';
 import MeetingEditor from './MeetingEditor.jsx';
 import {Button,Field,Form,Icon,Empty,Stamp,Badge,Avatar} from './UI.jsx';
 export default function SpaceDetail({space,data,operator,act,busy,onEdit,onClose,presence,device,notify,onNotify}){
- const [tab,setTab]=useState('Bitácora'),[signature,setSignature]=useState(localStorage.getItem('ana.signature')!=='false');
+ const [tab,setTab]=useState('Bitácora'),[signature,setSignature]=useState(localStore.getItem('ana.signature')!=='false');
  const [compose,setCompose]=useState(''),[command,setCommand]=useState(''),[editingMeeting,setEditingMeeting]=useState(null),[editingTemplate,setEditingTemplate]=useState(null);
  const notes=data.notes.filter(n=>n.space_id===space.id),tasks=data.tasks.filter(t=>t.space_id===space.id),meetings=data.meetings.filter(t=>t.space_id===space.id);
  const others=[...new Set(presence.filter(p=>p.device_id!==device).map(p=>p.operator_name))];
@@ -251,7 +235,7 @@ export default function SpaceDetail({space,data,operator,act,busy,onEdit,onClose
  {tab==='Reuniones'&&<><div className="section-title"><h3>Reuniones y minutas</h3><small>Hora de Perú</small></div><MeetingEditor key={editingMeeting?.id||'new'} spaceId={space.id} initial={editingMeeting} members={data.members} operator={operator} busy={busy} locked={!!editingMeeting&&(data.agreement_tasks||[]).some(a=>a.meeting_id===editingMeeting.id)} onCancel={()=>setEditingMeeting(null)} onSave={async p=>{const ok=await act('ADD_MEETING',p);if(ok)setEditingMeeting(null);return ok;}}/>
  {meetings.map(m=><article className="meeting" key={m.id}><Stamp value={m.datetime}/><h4>{m.title}</h4><p>{m.status} · {m.participants}</p>{m.location&&<p>{m.location}</p>}{m.link&&<a href={m.link} target="_blank" rel="noopener noreferrer">Abrir sala ↗</a>}<p className="pre-line">{m.agreements}</p>{m.agreement_items?.map((a,i)=><p key={i}>{i+1}. {a.text} · {a.assignee} · {a.due_date}</p>)}<small>Registró: {m.created_by} · Última gestión: {m.updated_by}</small><div className="row wrap"><Button kind="secondary" onClick={()=>{setCompose(minuteText(m,space));setTab('Formatos /');}}>Generar minuta</Button>{m.agreement_items?.length>0&&<Button kind="secondary" disabled={busy||!operator||(data.agreement_tasks||[]).filter(a=>a.meeting_id===m.id).length===m.agreement_items.length} onClick={()=>act('CREATE_AGREEMENT_TASKS',{id:m.id})}>Crear tareas de acuerdos</Button>}<Button kind="quiet" onClick={()=>setEditingMeeting(m)}>Editar</Button><Button kind="quiet" disabled={busy} onClick={()=>{if(confirm('¿Eliminar reunión?'))act('DELETE_MEETING',{id:m.id});}}>Eliminar</Button></div></article>)}{!meetings.length&&<Empty title="Próxima reunión">Agenda un encuentro y registra sus acuerdos.</Empty>}</>}
  {tab==='Formatos /'&&<><div className="section-title"><h3>Formatos y enlaces</h3><small>Compartidos en la nube</small></div><Field label="Buscar comando rápido"><input value={command} onChange={e=>setCommand(e.target.value)} placeholder="/drive, /tdr, /cut"/></Field><div className="templates">{data.templates.filter(t=>`${t.command} ${t.title}`.toLowerCase().includes(command.toLowerCase())).map(t=><article key={t.id}><button className="template-use" onClick={()=>{setCompose(t.content);setCommand('');}}><code>{t.command}</code><strong>{t.title}</strong></button><button className="icon-btn" aria-label={`Editar ${t.command}`} onClick={()=>setEditingTemplate(t)}><Icon name="settings" size={16}/></button><button className="icon-btn" aria-label={`Eliminar ${t.command}`} onClick={()=>{if(confirm('¿Eliminar formato compartido?'))act('DELETE_TEMPLATE',{id:t.id});}}><Icon name="close" size={16}/></button></article>)}</div>
- <Field label="Texto preparado / minuta"><textarea value={compose} maxLength={20000} rows={6} onChange={e=>setCompose(e.target.value)}/></Field><label className="switch"><input type="checkbox" checked={signature} onChange={e=>{setSignature(e.target.checked);localStorage.setItem('ana.signature',String(e.target.checked));}}/>Firma automática: *{operator||'Operador'} - Coord. ANA*</label><div className="row wrap"><Button disabled={!compose.trim()||!operator||busy} onClick={()=>composeAction()}><Icon name="copy" size={16}/>Copiar</Button><Button disabled={!compose.trim()||!operator||busy} kind="secondary" onClick={()=>composeAction(true)}>Abrir borrador en WhatsApp ↗</Button></div><small>No se envían mensajes automáticamente. La bitácora registra la preparación, no la entrega.</small>
+ <Field label="Texto preparado / minuta"><textarea value={compose} maxLength={20000} rows={6} onChange={e=>setCompose(e.target.value)}/></Field><label className="switch"><input type="checkbox" checked={signature} onChange={e=>{setSignature(e.target.checked);localStore.setItem('ana.signature',String(e.target.checked));panelBridge?.savePreferences({signature:String(e.target.checked)});}}/>Firma automática: *{operator||'Operador'} - Coord. ANA*</label><div className="row wrap"><Button disabled={!compose.trim()||!operator||busy} onClick={()=>composeAction()}><Icon name="copy" size={16}/>Copiar</Button><Button disabled={!compose.trim()||!operator||busy} kind="secondary" onClick={()=>composeAction(true)}>Abrir borrador en WhatsApp ↗</Button></div><small>No se envían mensajes automáticamente. La bitácora registra la preparación, no la entrega.</small>
  <details className="template-editor" open={!!editingTemplate}><summary>Crear o editar formato compartido</summary><Form key={editingTemplate?.id||'new'} className="stack card-form" onSave={async(f,form)=>{if(await act('UPSERT_TEMPLATE',{id:editingTemplate?.id||crypto.randomUUID(),command:f.get('command'),title:f.get('title'),content:f.get('content')})){setEditingTemplate(null);form.reset();}}}><Field label="Comando" name="command" required pattern="/[a-zA-Z0-9_\-]+" maxLength={40} defaultValue={editingTemplate?.command||''}/><Field label="Título" name="title" required maxLength={200} defaultValue={editingTemplate?.title||''}/><Field label="Texto o enlace"><textarea name="content" rows={3} required maxLength={20000} defaultValue={editingTemplate?.content||''}/></Field><div className="row"><Button disabled={busy||!operator}>Guardar formato</Button>{editingTemplate&&<Button type="button" kind="quiet" onClick={()=>setEditingTemplate(null)}>Cancelar edición</Button>}</div></Form></details></>}
  </section>
  </article>;
@@ -345,12 +329,13 @@ export default function CalendarView({data,onOpenSpace}){
 ## src/components/NotificationCenter.jsx
 
 ```jsx
+import {localStore} from '../storage.js';
 import React,{useCallback,useEffect,useRef,useState} from 'react';
 import {request} from '../api.js';
 import {remindersFor} from '../../shared/planning.js';
 import {Button,Field,Form,Modal,Stamp,Empty} from './UI.jsx';
 
-function storedDismissals(operator){try{return JSON.parse(localStorage.getItem('ana.reminders.'+operator)||'[]');}catch{return [];}}
+function storedDismissals(operator){try{return JSON.parse(localStore.getItem('ana.reminders.'+operator)||'[]');}catch{return [];}}
 export default function NotificationCenter({session,operator,data,act,busy,open,onClose,composeFor,onComposeClose,onUnread,onOpenSpace}){
  const [inbox,setInbox]=useState({received:[],sent:[],unread:0}),[tab,setTab]=useState('Recibidos'),[error,setError]=useState('');
  const [latest,setLatest]=useState(null),[reminders,setReminders]=useState([]),[dismissed,setDismissed]=useState([]);
@@ -373,7 +358,7 @@ export default function NotificationCenter({session,operator,data,act,busy,open,
  },[operator,refresh,onUnread]);
  useEffect(()=>{const check=()=>setReminders(remindersFor(data,operator));check();const timer=setInterval(check,30000);return()=>clearInterval(timer);},[data,operator]);
  const visible=reminders.filter(r=>!dismissed.includes(r.id));
- function dismiss(id){const next=[...dismissed,id].slice(-500);setDismissed(next);localStorage.setItem('ana.reminders.'+operator,JSON.stringify(next));}
+ function dismiss(id){const next=[...dismissed,id].slice(-500);setDismissed(next);localStore.setItem('ana.reminders.'+operator,JSON.stringify(next));}
  async function acknowledge(action,n){if(await act(action,{id:n.id})){if(latest?.id===n.id)setLatest(null);await refresh();}}
  return <>
  {latest&&!open&&<aside className="notice-popup" role="status"><strong>{latest.sender} te envió un aviso</strong><p>{latest.content}</p><div className="row"><Button kind="secondary" onClick={()=>{setTab('Recibidos');onClose(false);}}>Ver avisos</Button><Button kind="quiet" onClick={()=>setLatest(null)}>Cerrar</Button></div></aside>}
@@ -418,6 +403,87 @@ export default function DataCenter({data,session,operator,notify,onReload}){
  })}>{busy?'Restaurando':'Restaurar base completa'}</Button></div></Modal>}
  </section>;
 }
+```
+
+## src/components/VersionNotice.jsx
+
+```jsx
+import React,{useEffect,useState} from 'react';
+import {hasPendingWrites} from '../api.js';
+export default function VersionNotice(){
+ const [release,setRelease]=useState(null),[waiting,setWaiting]=useState(false);
+ useEffect(()=>{
+  let alive=true,reading=false;
+  async function check(){
+   if(reading||document.visibilityState==='hidden')return;reading=true;
+   try{
+    const response=await fetch(`./version.json?check=${Date.now()}`,{cache:'no-store',signal:AbortSignal.timeout(10000)});
+    if(!response.ok)return;const value=await response.json();
+    if(alive&&typeof value.build==='string'&&value.build!==__APP_BUILD__&&typeof value.version==='string')setRelease(value.version);
+   }catch{}finally{reading=false;}
+  }
+  check();const timer=setInterval(check,60000);document.addEventListener('visibilitychange',check);
+  return()=>{alive=false;clearInterval(timer);document.removeEventListener('visibilitychange',check);};
+ },[]);
+ if(!release)return null;
+ function update(){
+  if(hasPendingWrites()){setWaiting(true);return;}
+  if(window.confirm('Guarda primero los cambios de tus formularios. Se recargará el CRM para abrir la nueva versión. ¿Continuar?'))location.reload();
+ }
+ return <div className="release-banner" role="status"><span>Nueva versión del CRM disponible ({release}). Guarda tus cambios antes de actualizar.{waiting&&' Espera a que termine el guardado en curso.'}</span><button type="button" onClick={update}>Actualizar CRM</button></div>;
+}
+```
+
+## src/panelBridge.js
+
+```javascript
+import {envelope,matchesEnvelope,validChannel,extensionOrigin,cleanChat,cleanPreferences} from '../extension/protocol.js';
+import {localStore} from './storage.js';
+export function createPanelBridge(win,storage=localStore){
+ const channel=new URL(win.location.href).searchParams.get('bridge');
+ const enabled=win.parent!==win&&['/panel','/panel.html'].includes(win.location.pathname)&&validChannel(channel);
+ let origin='',chat=null,pendingPreferences={};
+ const listeners=new Set();
+ function receive(event){
+  if(!enabled||event.source!==win.parent||!extensionOrigin(event.origin)||(origin&&origin!==event.origin)||!matchesEnvelope(event.data,'CONTEXT',channel))return;
+  const next=cleanChat(event.data.payload?.chat);if(next===undefined)return;
+  origin=event.origin;chat=next;
+  try{
+  if(storage.getItem('ana.cloud-migrated')!=='1'){
+   const prefs=cleanPreferences(event.data.payload?.preferences);
+   if(!storage.getItem('ana.operator')&&prefs.operator)storage.setItem('ana.operator',prefs.operator);
+   if(storage.getItem('ana.signature')===null&&prefs.signature)storage.setItem('ana.signature',prefs.signature);
+   storage.setItem('ana.cloud-migrated','1');
+  }
+  }catch{}
+  if(Object.keys(pendingPreferences).length)win.parent.postMessage(envelope('PREFERENCES',channel,pendingPreferences),origin);
+  for(const listener of listeners)listener(chat);
+ }
+ if(enabled){win.addEventListener('message',receive);win.parent.postMessage(envelope('READY',channel),'*');}
+ return {enabled,getChat:()=>chat,savePreferences(value){
+  pendingPreferences={...pendingPreferences,...cleanPreferences(value)};
+  if(enabled&&origin)win.parent.postMessage(envelope('PREFERENCES',channel,pendingPreferences),origin);
+ },subscribe(listener){listeners.add(listener);listener(chat);return()=>listeners.delete(listener);},dispose(){win.removeEventListener('message',receive);listeners.clear();}};
+}
+export const panelBridge=typeof window==='undefined'?null:createPanelBridge(window);
+export const isPanel=Boolean(panelBridge?.enabled);
+```
+
+## src/storage.js
+
+```javascript
+function store(name){
+ const memory=new Map();let persistent=true;
+ let backend;
+ try{backend=globalThis[name];const key='ana.storage-check';backend.setItem(key,'1');backend.removeItem(key);}catch{persistent=false;}
+ return {
+  get persistent(){return persistent;},
+  getItem(key){if(persistent){try{return backend.getItem(key);}catch{persistent=false;}}return memory.get(key)??null;},
+  setItem(key,value){memory.set(key,String(value));if(persistent){try{backend.setItem(key,String(value));}catch{persistent=false;}}},
+  removeItem(key){memory.delete(key);if(persistent){try{backend.removeItem(key);}catch{persistent=false;}}}
+ };
+}
+export const localStore=store('localStorage'),sessionStore=store('sessionStorage');
 ```
 
 ## src/utils/excelExport.js

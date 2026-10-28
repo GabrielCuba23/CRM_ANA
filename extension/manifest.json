@@ -1,21 +1,18 @@
 {
   "manifest_version": 3,
   "name": "CRM & Agenda Cloud - Coordinación ANA (MIDAGRI)",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "minimum_chrome_version": "116",
   "description": "Agenda institucional compartida y panel pasivo de WhatsApp Web.",
+  "homepage_url": "https://crm-whatsapp-ana.pages.dev",
+  "icons": {"16":"icons/icon-16.png","32":"icons/icon-32.png","48":"icons/icon-48.png","128":"icons/icon-128.png"},
   "permissions": [
     "sidePanel",
-    "storage",
-    "activeTab"
+    "storage"
   ],
   "host_permissions": [
-    "https://web.whatsapp.com/*"
-  ],
-  "optional_host_permissions": [
-    "https://*/*",
-    "http://localhost/*",
-    "http://127.0.0.1/*"
+    "https://web.whatsapp.com/*",
+    "https://crm-whatsapp-ana.pages.dev/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -35,9 +32,10 @@
     }
   ],
   "action": {
-    "default_title": "Abrir CRM ANA en el panel derecho"
+    "default_title": "Abrir CRM ANA en el panel derecho",
+    "default_icon": {"16":"icons/icon-16.png","32":"icons/icon-32.png","48":"icons/icon-48.png"}
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src https: http://localhost:* http://127.0.0.1:*"
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src 'none'; frame-src https://crm-whatsapp-ana.pages.dev; base-uri 'none'"
   }
 }
