@@ -17,6 +17,8 @@ test('canal de panel verifica origen, ventana padre, protocolo, nonce y datos; R
   f.dispatch(message,from,source);assert.equal(chat,null);assert.equal(f.values.size,0);
  }
  f.dispatch(data);assert.deepEqual(chat,{rawTitle:'Jaruska',tabId:2});assert.equal(f.values.get('ana.operator'),'Acxel');assert.equal(f.values.has('ana.token'),false);
+ f.dispatch(envelope('CONTEXT',channel,{chat:{rawTitle:'Fuente privilegiada',tabId:3}}),origin,null);assert.equal(chat.rawTitle,'Fuente privilegiada');
+ f.dispatch(envelope('CONTEXT',channel,{chat:{rawTitle:'Falsificación',tabId:3}}),'https://ajeno.example',null);assert.equal(chat.rawTitle,'Fuente privilegiada');
  f.values.set('ana.operator','Jaruska');f.dispatch(data);assert.equal(f.values.get('ana.operator'),'Jaruska','No se pisa la elección cloud posterior');
  f.dispatch(envelope('CONTEXT',channel,{chat:null}));assert.equal(chat,null);
  f.bridge.savePreferences({operator:'Fernando',signature:'false',token:'privado',command:'ejecutar'});

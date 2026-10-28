@@ -1,7 +1,8 @@
 import {ensureWorkspaceSchema,spaceDetailsStatement,taskDetailsStatement,meetingDetailsStatement,restoreDetailsStatements} from './workspace.js';
 import {ensureInitialOperators,TEAM_ROSTER_VERSION_KEY} from './team.js';
-import {reportTables} from '../shared/domain.js';
-import {HttpError,assert,text,id,members,space,task,meeting,template,validateBackup,columns} from './validation.js';
+import {ensureCalendarSchema} from './calendar.js';
+import {reportTables,UNITS,availableUnits,folded} from '../shared/domain.js';
+import {HttpError,assert,text,id,members,orgUnits,space,task,meeting,calendarEvent,template,validateBackup,columns} from './validation.js';
 const MAX_BYTES=1500000;
 const TTL=15000;
 function headers(request,env){
@@ -33,8 +34,9 @@ async function readState(db){
  const results=await db.batch([
  db.prepare("SELECT spaces.*,COALESCE(d.email,'') AS email,COALESCE(d.extension,'') AS extension,COALESCE(d.office,'') AS office,COALESCE(d.entity,'') AS entity,COALESCE(d.location,'') AS location FROM spaces LEFT JOIN space_details d ON d.space_id=spaces.id ORDER BY updated_at DESC"),db.prepare('SELECT * FROM notes ORDER BY created_at DESC'),
  db.prepare("SELECT tasks.*,COALESCE(d.stage,CASE WHEN tasks.done=1 THEN 'Completado' ELSE 'Por hacer' END) AS stage,COALESCE(d.source_text,'') AS source_text,COALESCE(d.source_type,'Texto') AS source_type,COALESCE(d.due_datetime,'') AS due_datetime,COALESCE(d.updated_at,tasks.created_at) AS updated_at FROM tasks LEFT JOIN task_details d ON d.task_id=tasks.id ORDER BY created_at DESC"),db.prepare("SELECT meetings.*,COALESCE(d.location,'') AS location,COALESCE(d.status,'Programada') AS status,COALESCE(d.agreement_items,'[]') AS agreement_items FROM meetings LEFT JOIN meeting_details d ON d.meeting_id=meetings.id ORDER BY datetime ASC"),
- db.prepare('SELECT * FROM templates ORDER BY command'),db.prepare("SELECT config_value FROM team_config WHERE config_key='members'"),db.prepare('SELECT * FROM notifications ORDER BY created_at DESC'),db.prepare('SELECT * FROM agreement_tasks')]);
- return {spaces:results[0].results.map(s=>({...s,assignees:JSON.parse(s.assignees)})),notes:results[1].results,tasks:results[2].results.map(t=>({...t,done:!!t.done})),meetings:results[3].results.map(m=>({...m,agreement_items:JSON.parse(m.agreement_items)})),notifications:results[6].results,agreement_tasks:results[7].results,templates:results[4].results,members:JSON.parse(results[5].results[0]?.config_value||'[]')};
+ db.prepare('SELECT * FROM templates ORDER BY command'),db.prepare("SELECT config_key,config_value FROM team_config WHERE config_key IN ('members','org_units')"),db.prepare('SELECT * FROM notifications ORDER BY created_at DESC'),db.prepare('SELECT * FROM agreement_tasks'),db.prepare('SELECT * FROM calendar_events ORDER BY datetime ASC')]);
+ const config=Object.fromEntries(results[5].results.map(c=>[c.config_key,JSON.parse(c.config_value)]));
+ return {spaces:results[0].results.map(s=>({...s,assignees:JSON.parse(s.assignees)})),notes:results[1].results,tasks:results[2].results.map(t=>({...t,done:!!t.done})),meetings:results[3].results.map(m=>({...m,agreement_items:JSON.parse(m.agreement_items)})),calendar_events:results[8].results,notifications:results[6].results,agreement_tasks:results[7].results,templates:results[4].results,members:config.members||[],org_units:availableUnits(config.org_units||[])};
 }
 async function actor(db,name){
  const value=text(name,'Operador activo',80,true);
@@ -50,7 +52,8 @@ async function writeAction(db,body){
  switch(body.action){
  case 'UPSERT_SPACE': {
   const oldDetails=await db.prepare('SELECT * FROM space_details WHERE space_id=?').bind(id(p.id)).first();
-  const s=space({...oldDetails,...p});
+  const configured=await db.prepare("SELECT config_value FROM team_config WHERE config_key='org_units'").first();
+  const s=space({...oldDetails,...p},availableUnits(JSON.parse(configured?.config_value||'[]')));
   const team=await db.prepare("SELECT config_value FROM team_config WHERE config_key='members'").first();
   assert(s.assignees.every(a=>JSON.parse(team.config_value).includes(a)),'Responsable fuera del equipo');
   const statement=db.prepare(`INSERT INTO spaces (${columns.spaces.join(',')}) VALUES (?,?,?,?,?,?,?,?,?,?,?)
@@ -59,9 +62,26 @@ async function writeAction(db,body){
   assert(result.meta.changes>0,'Otra PC modificó este espacio. Actualiza y vuelve a editar.',409);return;
  }
  case 'DELETE_SPACE':statement=db.prepare('DELETE FROM spaces WHERE id=?').bind(id(p.id));break;
+ case 'ADD_ORG_UNIT':{
+  const name=orgUnits([p.name])[0],configured=await db.prepare("SELECT config_value FROM team_config WHERE config_key='org_units'").first();
+  const current=availableUnits(JSON.parse(configured?.config_value||'[]'));
+  assert(current.length<100,'Se alcanzó el máximo de 100 órganos/unidades');
+  assert(!current.some(unit=>folded(unit)===folded(name)),'Ese órgano/unidad ya existe',409);
+  const [,result]=await db.batch([
+   db.prepare("INSERT OR IGNORE INTO team_config VALUES ('org_units',?)").bind(JSON.stringify(UNITS)),
+   db.prepare("UPDATE team_config SET config_value=json_insert(config_value,'$[#]',?) WHERE config_key='org_units' AND json_array_length(config_value)<100 AND NOT EXISTS (SELECT 1 FROM json_each(config_value) WHERE value=? COLLATE NOCASE)").bind(name,name)]);
+  assert(result.meta.changes>0,'La unidad ya existe o se alcanzó el límite. Actualiza el directorio.',409);return;
+ }
  case 'ADD_NOTE': {
   await requireSpace(db,id(p.space_id));
   await db.batch([db.prepare('INSERT INTO notes (id,space_id,author,content,created_at) VALUES (?,?,?,?,?)').bind(id(p.id),p.space_id,operator,text(p.content,'Nota',20000,true),now),db.prepare('UPDATE spaces SET updated_at=? WHERE id=?').bind(now,p.space_id)]);return;
+ }
+ case 'DELETE_NOTE':{
+  const noteId=id(p.id),spaceId=id(p.space_id);
+  const note=await db.prepare('SELECT space_id FROM notes WHERE id=?').bind(noteId).first();
+  assert(note,'La nota ya no existe. Actualiza la bitácora.',404);assert(note.space_id===spaceId,'La nota pertenece a otro espacio',409);
+  const [result]=await db.batch([db.prepare('DELETE FROM notes WHERE id=? AND space_id=?').bind(noteId,spaceId),db.prepare('UPDATE spaces SET updated_at=? WHERE id=?').bind(now,spaceId)]);
+  assert(result.meta.changes>0,'La nota ya fue eliminada. Actualiza la bitácora.',409);return;
  }
  case 'UPSERT_TASK': {
   const oldDetails=await db.prepare('SELECT * FROM task_details WHERE task_id=?').bind(id(p.id)).first();
@@ -84,6 +104,20 @@ async function writeAction(db,body){
   const [result]=await db.batch([statement,meetingDetailsStatement(db,m)]);assert(result.meta.changes>0,'La reunión pertenece a otro espacio',409);return;
  }
  case 'DELETE_MEETING':statement=db.prepare('DELETE FROM meetings WHERE id=?').bind(id(p.id));break;
+ case 'UPSERT_EVENT':{
+  const e=calendarEvent(p);if(e.space_id)await requireSpace(db,e.space_id);
+  const names=columns.calendar_events;
+  const result=await db.prepare(`INSERT INTO calendar_events (${names.join(',')}) VALUES (${names.map(()=>'?').join(',')})
+   ON CONFLICT(id) DO UPDATE SET space_id=excluded.space_id,title=excluded.title,datetime=excluded.datetime,end_datetime=excluded.end_datetime,description=excluded.description,participants=excluded.participants,location=excluded.location,link=excluded.link,status=excluded.status,updated_by=excluded.updated_by,updated_at=excluded.updated_at,revision=calendar_events.revision+1 WHERE calendar_events.revision=?`)
+   .bind(e.id,e.space_id,e.title,e.datetime,e.end_datetime,e.description,e.participants,e.location,e.link,e.status,operator,now,operator,now,0,e.revision).run();
+  assert(result.meta.changes>0,'Otra PC modificó este evento. Actualiza y vuelve a editar.',409);return;
+ }
+ case 'DELETE_EVENT':{
+  assert(Number.isSafeInteger(p.revision)&&p.revision>=0,'Revisión de evento inválida');
+  const e={id:id(p.id),revision:p.revision};
+  const result=await db.prepare('DELETE FROM calendar_events WHERE id=? AND revision=?').bind(e.id,e.revision).run();
+  assert(result.meta.changes>0,'El evento cambió o ya fue eliminado. Actualiza la agenda.',409);return;
+ }
  case 'UPSERT_TEMPLATE': {
   const t=template(p);statement=db.prepare(`INSERT INTO templates (id,command,title,content,created_by,updated_by) VALUES (?,?,?,?,?,?)
    ON CONFLICT(id) DO UPDATE SET command=excluded.command,title=excluded.title,content=excluded.content,updated_by=excluded.updated_by`).bind(t.id,t.command,t.title,t.content,operator,operator);break;
@@ -146,7 +180,7 @@ async function writeAction(db,body){
 }
 async function restore(db,backup){
  const d=validateBackup(backup);
- const statements=['notifications','agreement_tasks','notes','tasks','meetings','presence','spaces','templates','team_config'].map(table=>db.prepare(`DELETE FROM ${table}`));
+ const statements=['calendar_events','notifications','agreement_tasks','notes','tasks','meetings','presence','spaces','templates','team_config'].map(table=>db.prepare(`DELETE FROM ${table}`));
  for(const table of Object.keys(columns)){
   const rows=d[table].map(row=>({...row,...(table==='tasks'?{done:row.done?1:0}:{})}));
   const names=columns[table];
@@ -156,6 +190,8 @@ async function restore(db,backup){
  statements.push(db.prepare("INSERT INTO team_config VALUES ('members',?)").bind(JSON.stringify(d.members)));
  statements.push(db.prepare('INSERT INTO team_config (config_key,config_value) VALUES (?,?)').bind(TEAM_ROSTER_VERSION_KEY,'1'));
  statements.push(db.prepare("INSERT INTO team_config VALUES ('workspace_schema_v2','1')"));
+ statements.push(db.prepare("INSERT INTO team_config VALUES ('calendar_schema_v1','1')"));
+ statements.push(db.prepare("INSERT INTO team_config VALUES ('org_units',?)").bind(JSON.stringify(d.org_units)));
  await db.batch(statements);
  return Object.fromEntries(Object.keys(columns).map(t=>[t,d[t].length]));
 }
@@ -168,6 +204,7 @@ export async function onRequest({request,env}){
   await authenticate(request,env,path);
   await ensureInitialOperators(env.DB);
   await ensureWorkspaceSchema(env.DB);
+  await ensureCalendarSchema(env.DB);
   if(request.method==='GET'){
    if(path==='notices'){
     const operator=await actor(env.DB,new URL(request.url).searchParams.get('operator'));
@@ -179,7 +216,7 @@ export async function onRequest({request,env}){
    }
    if(path==='presence')return send({presence:await presence(env.DB,id(new URL(request.url).searchParams.get('space_id')))});
    const data=await readState(env.DB);
-   if(path==='backup')return send({app:'crm-ana',schema_version:2,exported_at:new Date().toISOString(),data});
+   if(path==='backup')return send({app:'crm-ana',schema_version:3,exported_at:new Date().toISOString(),data});
    if(path==='powerbi'){
     const tables=reportTables(data);
     return send({generated_at:new Date().toISOString(),Resumen_KPIs:tables['1_Resumen_KPIs'],Agenda_Espacios:tables['2_Agenda_Espacios'],Tareas_y_CUTs:tables['3_Tareas_y_CUTs'],Bitacora_Historica:tables['4_Bitacora_Historica'],Reuniones_Acuerdos:tables['5_Reuniones_Acuerdos']});

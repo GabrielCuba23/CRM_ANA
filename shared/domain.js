@@ -1,12 +1,14 @@
+import {calendarItems,eventEnd} from './calendar.js';
 export const TASK_STAGES=['Por hacer','En proceso','En revisión','Completado'];
 export const STATUSES=['Urgente','Pendiente','En elaboración','Para V°B°','Cerrado'];
-export const UNITS=['ALA','AAA','DCERH','DARH','DPDRH','OAJ','OA','OPP','MIDAGRI','Externo'];
+export const UNITS=['ALA','AAA','DCERH','DARH','DPDRH','OAJ','OA','OPP','MIDAGRI','Sede Central','Prensa','Externo'];
+export function availableUnits(custom=[]){const seen=new Set();return [...UNITS,...custom].filter(name=>{const key=folded(name);if(seen.has(key))return false;seen.add(key);return true;});}
 export function identity(value) {
-  const raw=String(value||'').trim();
+  const raw=String(value||'').replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g,'').trim();
   if (/^\+?[\d\s().-]{7,25}$/.test(raw)) return raw.replace(/[^\d]/g,'');
   return raw.normalize('NFKC').toLocaleLowerCase('es-PE');
 }
-export function folded(value) {return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+export function folded(value) {return String(value||'').replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
 export function filterSpaces(data,search='',tray='Todos',operator='') {
  const needle=folded(search);
  return data.spaces.filter(s=>{
@@ -46,6 +48,6 @@ export function reportTables(data) {
  '2_Agenda_Espacios':data.spaces.map(s=>({ID_Espacio:s.id,Nombre_Contacto_o_Grupo:s.name,Cargo:s.role,Organo_Unidad:s.org_unit,Oficina:s.office||'',Entidad:s.entity||'',Correo:s.email||'',Anexo:s.extension||'',Ubicacion:s.location||'',Telefono_WhatsApp:s.phone_or_group_id,Codigo_CUT:s.cut_code,Documento_Referencia:s.doc_ref,Estado_Gestion:s.status,Responsables_Equipo:s.assignees.join(', '),Ultima_Actualizacion:s.updated_at})),
  '3_Tareas_y_CUTs':data.tasks.map(t=>({ID_Tarea:t.id,Espacio_ID:t.space_id,Codigo_CUT:map[t.space_id]?.cut_code||'',Contacto_Espacio:map[t.space_id]?.name||'',Organo:map[t.space_id]?.org_unit||'',Descripcion_Tarea:t.title,Responsable:t.assignee,Autor:t.created_by,Fecha_Limite:t.due_date,Fecha_Hora_Limite:t.due_datetime||'',Estado:t.stage||(t.done?'Completado':'Por hacer'),Texto_Origen:t.source_text||'',Tipo_Origen:t.source_type||'Texto'})),
  '4_Bitacora_Historica':data.notes.map(n=>({ID_Nota:n.id,Espacio_ID:n.space_id,Fecha_Hora:n.created_at,Autor_Equipo:n.author,Contacto_Espacio:map[n.space_id]?.name||'',Codigo_CUT:map[n.space_id]?.cut_code||'',Actualizacion_Registrada:n.content})),
- '5_Reuniones_Acuerdos':data.meetings.map(m=>({ID_Reunion:m.id,Espacio_ID:m.space_id,Fecha_Hora_Reunion:m.datetime,Titulo_Reunion:m.title,Contacto_Espacio:map[m.space_id]?.name||'',Codigo_CUT:map[m.space_id]?.cut_code||'',Participantes:m.participants,Enlace_Sala:m.link,Sala_Presencial:m.location||'',Estado_Reunion:m.status||'Programada',Acuerdos_Pactados:agreementLines(m).join('\n'),Autor:m.created_by}))
+ '5_Reuniones_Acuerdos':calendarItems(data).map(m=>({ID_Reunion:m.id,Espacio_ID:m.space_id,Fecha_Hora_Reunion:m.datetime,Fecha_Hora_Fin:eventEnd(m),Tipo_Registro:m.kind==='event'?'Evento':'Reunión',Descripcion:m.description||'',Titulo_Reunion:m.title,Contacto_Espacio:map[m.space_id]?.name||'',Codigo_CUT:map[m.space_id]?.cut_code||'',Participantes:m.participants,Enlace_Sala:m.link,Sala_Presencial:m.location||'',Estado_Reunion:m.status||'Programada',Acuerdos_Pactados:agreementLines(m).join('\n'),Autor:m.created_by}))
  };
 }

@@ -10,7 +10,7 @@ const headers=[
  ['ID_Espacio','Nombre_Contacto_o_Grupo','Cargo','Organo_Unidad','Oficina','Entidad','Correo','Anexo','Ubicacion','Telefono_WhatsApp','Codigo_CUT','Documento_Referencia','Estado_Gestion','Responsables_Equipo','Ultima_Actualizacion'],
  ['ID_Tarea','Espacio_ID','Codigo_CUT','Contacto_Espacio','Organo','Descripcion_Tarea','Responsable','Autor','Fecha_Limite','Fecha_Hora_Limite','Estado','Texto_Origen','Tipo_Origen'],
  ['ID_Nota','Espacio_ID','Fecha_Hora','Autor_Equipo','Contacto_Espacio','Codigo_CUT','Actualizacion_Registrada'],
- ['ID_Reunion','Espacio_ID','Fecha_Hora_Reunion','Titulo_Reunion','Contacto_Espacio','Codigo_CUT','Participantes','Enlace_Sala','Sala_Presencial','Estado_Reunion','Acuerdos_Pactados','Autor']
+ ['ID_Reunion','Espacio_ID','Tipo_Registro','Descripcion','Fecha_Hora_Reunion','Fecha_Hora_Fin','Titulo_Reunion','Contacto_Espacio','Codigo_CUT','Participantes','Enlace_Sala','Sala_Presencial','Estado_Reunion','Acuerdos_Pactados','Autor']
 ];
 const tableNames=['Resumen_KPIs','Agenda_Espacios','Tareas_y_CUTs','Bitacora_Historica','Reuniones_Acuerdos'];
 const esc=value=>String(value??'').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&apos;');

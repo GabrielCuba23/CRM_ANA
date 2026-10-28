@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
 import {ensureWorkspaceSchema} from '../server/workspace.js';
+import {ensureCalendarSchema} from '../server/calendar.js';
 test('la actualización automática crea tablas adicionales sin perder datos anteriores y se puede repetir',async()=>{
  const sql=new DatabaseSync(':memory:');
  sql.exec(readFileSync(new URL('../migrations/0001_initial.sql',import.meta.url),'utf8'));
@@ -14,5 +15,6 @@ test('la actualización automática crea tablas adicionales sin perder datos ant
   for(const table of ['space_details','task_details','meeting_details','notifications','agreement_tasks'])assert.ok(sql.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?").get(table));
   sql.prepare("INSERT INTO notifications (id,sender,recipient,content,created_at) VALUES ('n1','Acxel','Jaruska','Aviso conservado','2026-10-27T15:00:00.000Z')").run();
   await ensureWorkspaceSchema(db);assert.equal(sql.prepare('SELECT COUNT(*) AS n FROM notifications').get().n,1);
+  await ensureCalendarSchema(db);await ensureCalendarSchema(db);assert.ok(sql.prepare("SELECT name FROM sqlite_master WHERE name='calendar_events'").get());assert.equal(sql.prepare('SELECT COUNT(*) AS n FROM spaces').get().n,1);
  }finally{sql.close();}
 });

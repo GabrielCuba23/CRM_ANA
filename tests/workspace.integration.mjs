@@ -41,8 +41,8 @@ try{
  await check('Power BI incluye directorio, estados y acuerdos ampliados',async()=>{
   const result=(await api('powerbi')).value;assert.equal(result.Agenda_Espacios[0].Correo,'contacto@example.org');assert.equal(result.Agenda_Espacios[0].Anexo,'204');assert.equal(result.Tareas_y_CUTs.find(t=>t.ID_Tarea==='t1').Estado,'Completado');assert.match(result.Reuniones_Acuerdos[0].Acuerdos_Pactados,/Jaruska/);assert.equal(result.Reuniones_Acuerdos[0].Estado_Reunion,'Realizada');
  });
- await check('respaldo v2 conserva avisos, detalles y vínculos al restaurar',async()=>{
-  const backup=(await api('backup')).value;assert.equal(backup.schema_version,2);assert.equal(backup.data.notifications.length,1);assert.equal(backup.data.agreement_tasks.length,2);
+ await check('respaldo v3 conserva avisos, detalles y vínculos al restaurar',async()=>{
+  const backup=(await api('backup')).value;assert.equal(backup.schema_version,3);assert.equal(backup.data.notifications.length,1);assert.equal(backup.data.agreement_tasks.length,2);
   const invalid=structuredClone(backup);invalid.data.notifications[0].space_id='missing';assert.equal((await api('backup',{confirm:'RESTAURAR',operator_name:'Acxel',backup:invalid})).status,400);
   assert.equal((await write('DELETE_SPACE',{id:'s1'})).status,200);assert.equal((await api()).value.spaces.length,0);
   assert.equal((await api('backup',{confirm:'RESTAURAR',operator_name:'Acxel',backup})).status,200);

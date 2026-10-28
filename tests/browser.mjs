@@ -110,9 +110,9 @@ try{
  await page.getByLabel('Buscador global').fill('aforo');assert.equal(await page.locator('.space-card').count(),1);
  await page.getByLabel('Buscador global').fill('no existe ningún contacto');await page.getByText('No encontramos coincidencias').waitFor();
  await page.getByLabel('Buscador global').fill('');
- await page.getByRole('navigation',{name:'Navegación principal'}).getByRole('button',{name:'Kanban',exact:true}).click();
- await page.getByLabel('Estado de Coordinación ALA Huallaga').selectOption('Para V°B°');
- await page.waitForFunction(()=>document.querySelector('.kanban-card select')?.value==='Para V°B°');
+ await page.getByRole('navigation',{name:'Navegación principal'}).getByRole('button',{name:'Tareas',exact:true}).click();
+ await page.getByRole('button',{name:'Lista',exact:true}).click();assert.equal(await page.locator('.task-list .task-board-card').count(),1);
+ await page.getByRole('button',{name:'Tablero Kanban',exact:true}).click();assert.equal(await page.locator('.task-board .task-board-card').count(),1);
  await page.getByRole('navigation',{name:'Navegación principal'}).getByRole('button',{name:'Centro de datos',exact:true}).click();
  const excelDownload=page.waitForEvent('download');await page.getByRole('button',{name:'Descargar .xlsx'}).click();
  const excel=await excelDownload;const wb=XLSX.read(await readFile(await excel.path()),{type:'buffer'});assert.equal(wb.SheetNames.length,5);assert.equal(XLSX.utils.sheet_to_json(wb.Sheets['2_Agenda_Espacios'])[0].Codigo_CUT,'CUT-148920-2026');
@@ -137,6 +137,9 @@ try{
  await wa.waitForFunction(()=>window.__messages.at(-1)?.payload.rawTitle==='Equipo ALA');
  await wa.evaluate(()=>document.querySelector('#main').remove());
  await wa.waitForFunction(()=>window.__messages.at(-1)?.payload.rawTitle==='');
+ await wa.evaluate(()=>{document.body.innerHTML='<main role="main"><header><span title="Jaruska" dir="ltr">Jaruska</span><span dir="auto">en línea</span></header></main>';});
+ await wa.waitForFunction(()=>window.__messages.at(-1)?.payload.rawTitle==='Jaruska');
+ const fallback=await wa.locator('body').innerHTML();await wa.evaluate(()=>window.__readChat({type:'CRM_READ_CHAT'}));await wa.waitForFunction(()=>window.__messages.at(-1)?.payload.rawTitle==='Jaruska');assert.equal(await wa.locator('body').innerHTML(),fallback);
  await passive.close();
  console.log('PASS lector pasivo en DOM simulado: lectura inicial, cambio de chat, limpieza y cero modificaciones al contenido.');
  console.log('PENDIENTE: carga real Manifest V3, Side Panel y permisos interactivos. La política administrativa del Chromium de este entorno prohíbe extensiones descomprimidas.');

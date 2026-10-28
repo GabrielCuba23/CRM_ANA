@@ -1,49 +1,49 @@
 table Resumen_KPIs
-	lineageTag: b9bd8dcf-e097-4bdb-bb55-90256b67afcf
+	lineageTag: 7f1114ca-5827-47a1-9568-021ab9d509d1
 
 	measure Carga_pendiente = SUM(Resumen_KPIs[Tareas_Pendientes])
 		formatString: #,0
-		lineageTag: f1c7dd1a-f7b6-44aa-b9f9-865d953052b8
+		lineageTag: 6c73adc8-7744-4cf0-8273-28effff00565
 
 	column Integrante_Equipo
 		dataType: string
-		lineageTag: 91a2ca90-21b3-4939-8d48-bd880f8189eb
+		lineageTag: a380a810-bf9e-42de-b7a1-ae7def5bcd1d
 		sourceColumn: Integrante_Equipo
 		summarizeBy: none
 
 	column Espacios_Asignados
 		dataType: int64
-		lineageTag: 2742ca51-eb76-47e3-bbb2-dbfab2b44f91
+		lineageTag: a14f3b19-8d4d-4090-9cf4-f3149c38b8e8
 		sourceColumn: Espacios_Asignados
 		summarizeBy: sum
 
 	column Coordinaciones_Urgentes
 		dataType: int64
-		lineageTag: 2378f0d8-86b6-4b67-b3c6-dddb74f0939a
+		lineageTag: c11768d0-5c01-458b-9df7-f9def7233d49
 		sourceColumn: Coordinaciones_Urgentes
 		summarizeBy: sum
 
 	column Para_Visto_Bueno
 		dataType: int64
-		lineageTag: 5bd53747-9dcb-45cf-b438-818586b376c5
+		lineageTag: 3b6b5779-c45f-4fda-938e-44f303e61f97
 		sourceColumn: Para_Visto_Bueno
 		summarizeBy: sum
 
 	column Tareas_Pendientes
 		dataType: int64
-		lineageTag: e3bf336c-9d4a-4c32-8045-94569a684078
+		lineageTag: dbb7910c-e0c3-4382-a55e-48cfd68ef520
 		sourceColumn: Tareas_Pendientes
 		summarizeBy: sum
 
 	column Tareas_Completadas
 		dataType: int64
-		lineageTag: 7c046b61-b8d0-4fc0-8460-d1ef901fbe4e
+		lineageTag: dc7665df-b58b-4d36-bb77-d7498b871714
 		sourceColumn: Tareas_Completadas
 		summarizeBy: sum
 
 	column Porcentaje_Avance
 		dataType: int64
-		lineageTag: e3b10154-8116-45b0-a258-7f5607d99815
+		lineageTag: a3f6bb5e-492a-4574-92a3-d82f230ba34f
 		sourceColumn: Porcentaje_Avance
 		summarizeBy: sum
 

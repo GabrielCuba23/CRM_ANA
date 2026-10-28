@@ -62,7 +62,7 @@ Si agregas un dominio personalizado, el navegador usa automáticamente ese mismo
 4. El panel carga automáticamente el CRM de Cloudflare. Introduce únicamente el token del equipo. La sesión anterior de la extensión local no se transfiere; el token nunca cruza el puente.
 5. Elige «¿Quién opera esta PC?». Ajusta manualmente el ancho del panel entre 380 y 450 px; Chrome administra el ancho y no permite fijarlo desde el manifiesto.
 
-El lector solo observa `#main header` y transmite el texto del título. No agrega botones, no cambia atributos, no escribe chats, no lee la lista de mensajes ni envía mensajes. La API de WhatsApp no forma parte del proyecto. La detección depende del DOM disponible: si Meta cambia el encabezado, puede dejar de detectar; el directorio manual sigue disponible.
+El lector observa únicamente el encabezado activo (`#main header` y alternativas semánticas) y transmite el texto del título. Comprueba cambios también cada dos segundos sin modificar WhatsApp. No agrega botones, no cambia atributos, no escribe chats, no lee la lista de mensajes ni envía mensajes. La API de WhatsApp no forma parte del proyecto. La detección depende del DOM disponible: si Meta cambia el encabezado, puede dejar de detectar; el directorio manual sigue disponible.
 
 Los teléfonos se normalizan quitando espacios y signos, sin inventar prefijos internacionales. Usa código de país. Un encabezado con nombre guardado no revela necesariamente el número real; los grupos no exponen un ID estable en su título. La coincidencia por nombre solo se abre automáticamente si es única. Ante duplicados o falta de coincidencia se pide seleccionar un espacio o crear uno con el teléfono/ID conocido. Nunca se asignan espacios por similitud aproximada.
 
@@ -70,7 +70,7 @@ Los teléfonos se normalizan quitando espacios y signos, sin inventar prefijos i
 
 ## Actualizar la extensión
 
-La versión 1.2.0 separa el CRM web del contenedor. Instálala **una vez en cada PC**: cierra el panel, sustituye los archivos de su carpeta por el ZIP nuevo y pulsa **Recargar** en `chrome://extensions`. La tarjeta debe mostrar 1.2.0. Recarga también WhatsApp Web para activar el lector nuevo. Elige tu operador y vuelve a ingresar el token en el sitio Cloudflare. Los registros D1 no cambian.
+La versión 1.2.0 separó el CRM web del contenedor. La entrega actual incluye web 1.3.0 y contenedor 1.2.1. Instálalo **una vez en cada PC**: cierra el panel, sustituye los archivos de su carpeta por el ZIP nuevo y pulsa **Recargar** en `chrome://extensions`. La tarjeta debe mostrar 1.2.1. Recarga también WhatsApp Web para activar el lector nuevo. Elige tu operador y vuelve a ingresar el token en el sitio Cloudflare. Los registros D1 no cambian.
 
 Después, los cambios de React, estilos, reportes y API se publican en GitHub y se despliegan en Pages; no requieren repartir ZIPs nuevos. Al abrir el panel se carga el despliegue actual. Si ya estaba abierto, consulta la versión cada minuto y al volver a la pestaña; muestra **Actualizar CRM**. El aviso no recarga automáticamente ni descarta borradores; el usuario guarda y confirma la recarga. Las escrituras pendientes impiden recargar mediante ese botón. El control **Recargar** del contenedor pide confirmar antes de recargar manualmente.
 
@@ -79,6 +79,8 @@ Los cambios de permisos, scripts de WhatsApp, puente o dominio del contenedor s�
 Consulta [guía completa de actualización y publicación](docs/ACTUALIZACIONES_CLOUD.md) y [ficha preparada para la tienda](store/FICHA_TIENDA.md). La política de privacidad está en `/privacy.html` del sitio. El paquete incluye iconos PNG de 16, 32, 48 y 128 px y un manifiesto con solo dos permisos y dos orígenes exactos.
 
 Las consultas fallidas por red o errores temporales se reintentan una sola vez; no se superponen consultas de sincronización. Al recuperarse la lectura, se retira el aviso correspondiente. Los guardados no se reintentan automáticamente ni se consideran confirmados por una lectura posterior. Si el servidor devuelve HTML en vez de JSON, el aviso muestra el código HTTP y una indicación para comprobar la conexión o la configuración.
+
+Consulta también [novedades y uso de la web 1.3.0](docs/NOVEDADES_1.3.md): Tareas con Lista/Kanban, creación de eventos, Google/ICS, eliminación de notas, unidades personalizadas y recuperación del chat.
 
 ## Operadores del equipo
 
@@ -93,6 +95,8 @@ En una base ya existente, la API actualiza la lista una sola vez al recibir una 
 - Cada pestaña/panel tiene un identificador de sesión y cada perfil de navegador un identificador de dispositivo. Dos perfiles en la misma máquina pueden aparecer como dos PC. Los latidos son cada 4 segundos y expiran a los 15 segundos. No son bloqueos de edición. Se informa cuando no se puede actualizar la presencia.
 - El estado de la agenda se refresca cada 12 segundos y después de cada escritura. La detección de colisión usa un endpoint independiente que devuelve solo presencia, sin descargar toda la base cada cuatro segundos.
 - Los espacios verifican su fecha de actualización para evitar sobrescribir una edición concurrente. Una nota también actualiza el espacio. Ante conflicto actualiza y vuelve a abrir el formulario. Tareas, reuniones y formatos usan última escritura; la cinta de presencia avisa del trabajo paralelo.
+- Cada registro de Bitácora permite Eliminar nota con confirmación. La eliminación se comparte con todo el equipo y actualiza el contacto; no es un registro inmutable.
+- Sede Central y Prensa están en Órgano/Unidad; Añadir órgano/unidad permite registrar más opciones compartidas y usarlas como filtro.
 - Cada nota lleva autor del operador, tareas y reuniones llevan autor y último operador, y los formatos firmados se registran como nota al copiar/abrir borrador. Las marcas de tiempo se generan en el servidor; reuniones y presentación usan hora de Perú.
 - Para eliminar un integrante, reasigna sus espacios y tareas pendientes primero. La autoría histórica permanece. Conserva al menos un integrante.
 - Contactos y su información relacionada se guardan en D1, independientemente de la libreta del teléfono que escaneó WhatsApp.
@@ -103,9 +107,9 @@ Los comandos `/drive`, `/tdr` y `/cut` se instalan como formatos iniciales edita
 
 Desde el espacio de un contacto pulsa **Avisar a otro operador**. Elige al compañero y escribe qué necesita el contacto. El aviso se registra en D1 y en la bitácora. La campana muestra la bandeja; el destinatario puede marcar leído, abrir el contacto y confirmar **Recibido**. El remitente ve la confirmación en Enviados. La bandeja consulta cada cinco segundos mientras el CRM está abierto; los avisos permanecen guardados para el operador desconectado. Se muestran hasta 100 por bandeja, priorizando los no leídos; el respaldo conserva el historial completo. La identidad sigue basada en el selector compartido, sin cuentas individuales ni garantía criptográfica de autoría.
 
-En **Tareas** hay un tablero del equipo con Por hacer, En proceso, En revisión y Completado, filtrable por integrante. Pega el texto de WhatsApp en el formulario para convertirlo; para audios o documentos registra la transcripción o referencia. Se conserva el origen sin añadir botones o leer mensajes de WhatsApp.
+En **Tareas** hay una única sección con vistas Lista y Tablero Kanban sobre los mismos registros, con Por hacer, En proceso, En revisión y Completado, filtrable por integrante y estado. Pega el texto de WhatsApp en el formulario para convertirlo; para audios o documentos registra la transcripción o referencia. Se conserva el origen sin añadir botones o leer mensajes de WhatsApp.
 
-En **Agenda** hay calendario mensual y lista de reuniones. Desde cada contacto puedes agendar enlace o sala presencial, marcar Programada/Realizada/Cancelada y añadir acuerdos con responsable/fecha. **Crear tareas de acuerdos** es idempotente. Los acuerdos que ya tengan tareas se gestionan desde Tareas para evitar duplicados y vínculos ambiguos.
+En **Agenda** hay calendario mensual, lista de reuniones y **Nuevo evento** con inicio/fin, descripción y contacto opcional. Cada evento ofrece Google Calendar para confirmar Guardar, y un archivo .ics para Apple, Outlook y otros calendarios. Se puede exportar la selección visible. No es sincronización bidireccional ni envío automático de invitaciones. Desde cada contacto puedes agendar enlace o sala presencial, marcar Programada/Realizada/Cancelada y añadir acuerdos con responsable/fecha. **Crear tareas de acuerdos** es idempotente. Los acuerdos que ya tengan tareas se gestionan desde Tareas para evitar duplicados y vínculos ambiguos.
 
 La campana contiene recordatorios en pantalla de reuniones próximas (15 minutos), tareas próximas (una hora) y vencidas. Requieren CRM abierto y operador seleccionado. Una fecha de tarea sin hora vence a las 17:00 de Perú; si registras fecha/hora se respeta esa hora. Descartar un recordatorio se conserva en esta PC por operador. No se instalan servicios de fondo ni se envían mensajes externos.
 
@@ -121,7 +125,7 @@ El proyecto Power BI descargable está en `powerbi/CRM_ANA.pbip` y `public/power
 
 El conector Power BI muestra/copia la URL real de la instancia con el token codificado. La respuesta incluye `Resumen_KPIs`, `Agenda_Espacios`, `Tareas_y_CUTs`, `Bitacora_Historica` y `Reuniones_Acuerdos`. Al conectar elige cada lista y conviértela en tabla en Power Query. La URL es una credencial: puede quedar en el historial, el archivo PBIX y registros del proveedor. El endpoint no acepta token por URL para ningún otro recurso. Usa cabecera `X-Team-Token` en integraciones que la permitan.
 
-La copia JSON v2 incluye contactos y datos institucionales, notas, tareas con estado y origen, reuniones con acuerdos, formatos, operadores, avisos internos y vínculos de acuerdos con tareas. Mantiene compatibilidad con copias v1. Incluye un identificador de aplicación y versión de esquema. La restauración comprueba campos, enlaces, referencias, duplicados y tamaños **antes** de modificar datos, y ejecuta borrado e inserción en un único `DB.batch` atómico. Se descarga una copia de seguridad del estado anterior antes de restaurar desde la UI. Se excluye presencia porque es temporal. La copia no incluye cuenta Cloudflare, token, dominio, ni UUID: el nuevo administrador configura su propio Pages/D1 y restaura el JSON.
+La copia JSON v3 incluye eventos generales y vinculados, órganos/unidades personalizados, además de contactos y datos institucionales, notas, tareas con estado y origen, reuniones con acuerdos, formatos, operadores, avisos internos y vínculos de acuerdos con tareas. Mantiene compatibilidad con copias v1 y v2. Incluye un identificador de aplicación y versión de esquema. La restauración comprueba campos, enlaces, referencias, duplicados y tamaños **antes** de modificar datos, y ejecuta borrado e inserción en un único `DB.batch` atómico. Se descarga una copia de seguridad del estado anterior antes de restaurar desde la UI. Se excluye presencia porque es temporal. La copia no incluye cuenta Cloudflare, token, dominio, ni UUID: el nuevo administrador configura su propio Pages/D1 y restaura el JSON.
 
 Límite de restauración UI: 1,4 MB de JSON; API: 1,5 MB, incluidos metadatos. Para conjuntos mayores usa respaldos/exportación nativa de D1 con su propia administración y Time Travel según el plan Cloudflare. Archiva y protege los JSON: contienen datos personales. El esquema se instala en una D1 nueva; no ejecutes la versión destructiva `DROP TABLE` original sobre datos existentes.
 
@@ -165,7 +169,7 @@ Se utiliza el logo original de ANA entregado por el usuario, conservado sin modi
 ## Estructura
 
 - `src/components/AnaLogo.jsx`: emblema original compartido por todas las vistas.
-- `src/App.jsx`: estado, sincronización, operador, búsqueda, bandejas, directorio y Kanban.
+- `src/App.jsx`: estado, sincronización, operador, búsqueda, bandejas y directorio; Tareas agrupa Lista/Kanban.
 - `src/components/SpaceDetail.jsx`: las cuatro pestañas de cada contacto y la colisión.
 - `src/components/SpaceForm.jsx`: alta y edición del espacio y sus responsables.
 - `src/components/DataCenter.jsx`: Excel, Power BI y entrega de cargo.

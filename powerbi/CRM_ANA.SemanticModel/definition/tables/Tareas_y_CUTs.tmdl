@@ -1,103 +1,103 @@
 table Tareas_y_CUTs
-	lineageTag: 08fdff48-46d4-4768-9c72-644b2e6388ab
+	lineageTag: ce145458-0d6a-45d8-8915-0cc2f060de87
 
 	measure Total_tareas = COUNTROWS(Tareas_y_CUTs)
 		formatString: #,0
-		lineageTag: f47ec72a-bed0-4d48-9dab-92a71d4bf7e9
+		lineageTag: 5eb21152-f35a-4fa2-bd9b-0c2bcba6692f
 
 	measure Tareas_pendientes = CALCULATE(COUNTROWS(Tareas_y_CUTs), Tareas_y_CUTs[Estado] <> "Completado")
 		formatString: #,0
-		lineageTag: 88bd8192-ac23-4131-8ae0-fb9bb1764f13
+		lineageTag: ab57b6fa-dde9-4800-8492-3b056485caeb
 
 	measure Tareas_completadas = CALCULATE(COUNTROWS(Tareas_y_CUTs), Tareas_y_CUTs[Estado] = "Completado")
 		formatString: #,0
-		lineageTag: 7c16295e-60ba-4b3b-9031-543106930ec5
+		lineageTag: 9895860f-a522-4c69-9702-06c3efaa5884
 
 	measure Avance = DIVIDE([Tareas_completadas], [Total_tareas], 0)
 		formatString: 0.0%
-		lineageTag: 2f5c0af3-49a0-4e29-86bf-e7e7655dfde0
+		lineageTag: eb5e147c-4f3c-4da2-9ffe-234a7109bf4b
 
 	measure Tareas_vencidas = COUNTROWS(FILTER(Tareas_y_CUTs, Tareas_y_CUTs[Estado] <> "Completado" && NOT ISBLANK(Tareas_y_CUTs[Fecha_Limite]) && IF(ISBLANK(Tareas_y_CUTs[Fecha_Hora_Limite]), Tareas_y_CUTs[Fecha_Limite] + TIME(17,0,0), Tareas_y_CUTs[Fecha_Hora_Limite]) < UTCNOW() - TIME(5,0,0)))
 		formatString: #,0
-		lineageTag: c59fee52-574b-47e7-b7b0-a9d81f94f5fa
+		lineageTag: d1f94286-e8b9-4685-8187-5018cee76710
 
 	column ID_Tarea
 		dataType: string
-		lineageTag: bde81a81-eb4a-4421-822a-09a3f69bc903
+		lineageTag: f3d38244-8e18-4252-a0b6-26a5d1c17ebe
 		sourceColumn: ID_Tarea
 		summarizeBy: none
 
 	column Espacio_ID
 		dataType: string
-		lineageTag: 88ac58ef-f8b7-4b66-a980-32be718a7537
+		lineageTag: d8b430d6-f140-47fb-bd8f-422d96336f8b
 		sourceColumn: Espacio_ID
 		summarizeBy: none
 
 	column Codigo_CUT
 		dataType: string
-		lineageTag: 1ca3cd96-30b6-4517-8dc0-6b1a2ce14834
+		lineageTag: 8369516c-40c5-44ae-92df-150d7be52028
 		sourceColumn: Codigo_CUT
 		summarizeBy: none
 
 	column Contacto_Espacio
 		dataType: string
-		lineageTag: 8f7f9076-5f69-47b9-8049-12b458e33004
+		lineageTag: fe92d77c-4a7b-4e93-b3e9-baa19b7c67ae
 		sourceColumn: Contacto_Espacio
 		summarizeBy: none
 
 	column Organo
 		dataType: string
-		lineageTag: a40244c4-f12c-4bda-bf14-fc13e7154ff1
+		lineageTag: 98f59fe9-91db-4fa7-bcad-816af5937e4c
 		sourceColumn: Organo
 		summarizeBy: none
 
 	column Descripcion_Tarea
 		dataType: string
-		lineageTag: b188963d-7e15-4b3c-b5e7-1c06b6dec0e7
+		lineageTag: 141a5237-19a1-436d-ad3f-cd3d85a5553a
 		sourceColumn: Descripcion_Tarea
 		summarizeBy: none
 
 	column Responsable
 		dataType: string
-		lineageTag: 850685c0-f9bf-48c7-9fa6-9c3da98cc7f1
+		lineageTag: dc169083-34df-49cf-9212-50a50f8e7bc7
 		sourceColumn: Responsable
 		summarizeBy: none
 
 	column Autor
 		dataType: string
-		lineageTag: 8f933b80-8430-4b47-83a0-a5c423628458
+		lineageTag: 8066e245-7cd9-4034-890f-78d07bcfe836
 		sourceColumn: Autor
 		summarizeBy: none
 
 	column Fecha_Limite
 		dataType: dateTime
-		lineageTag: 9fc284d5-a7a4-43a0-8c96-b1b2ac05195c
+		lineageTag: 67a06fb0-059d-4215-9136-d2d05ea8bef1
 		sourceColumn: Fecha_Limite
 		summarizeBy: none
 		formatString: yyyy-MM-dd
 
 	column Fecha_Hora_Limite
 		dataType: dateTime
-		lineageTag: c7d90bca-3802-414f-9b44-9054bd684ca9
+		lineageTag: 99552f45-1dc6-4a19-8197-34d668978c22
 		sourceColumn: Fecha_Hora_Limite
 		summarizeBy: none
 		formatString: yyyy-MM-dd HH:mm
 
 	column Estado
 		dataType: string
-		lineageTag: 0f0d7db6-db17-4cd3-8962-ded2c7400eb1
+		lineageTag: 9bb22970-984e-48a7-bbb4-2274f659185e
 		sourceColumn: Estado
 		summarizeBy: none
 
 	column Texto_Origen
 		dataType: string
-		lineageTag: e62f209f-1d2e-49d9-9f5f-6402986c043c
+		lineageTag: 38e9d00f-fb9a-4005-b0f6-316b2ed155e0
 		sourceColumn: Texto_Origen
 		summarizeBy: none
 
 	column Tipo_Origen
 		dataType: string
-		lineageTag: 784e6c69-3650-4cea-b3db-2ab1a28b77aa
+		lineageTag: e48299bd-6f1c-49a8-90c4-2e1dcb178c3f
 		sourceColumn: Tipo_Origen
 		summarizeBy: none
 

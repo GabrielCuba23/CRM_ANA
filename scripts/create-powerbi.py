@@ -12,7 +12,7 @@ SCHEMA={
 'Agenda_Espacios':['ID_Espacio','Nombre_Contacto_o_Grupo','Cargo','Organo_Unidad','Oficina','Entidad','Correo','Anexo','Ubicacion','Telefono_WhatsApp','Codigo_CUT','Documento_Referencia','Estado_Gestion','Responsables_Equipo','Ultima_Actualizacion'],
 'Tareas_y_CUTs':['ID_Tarea','Espacio_ID','Codigo_CUT','Contacto_Espacio','Organo','Descripcion_Tarea','Responsable','Autor','Fecha_Limite','Fecha_Hora_Limite','Estado','Texto_Origen','Tipo_Origen'],
 'Bitacora_Historica':['ID_Nota','Espacio_ID','Fecha_Hora','Autor_Equipo','Contacto_Espacio','Codigo_CUT','Actualizacion_Registrada'],
-'Reuniones_Acuerdos':['ID_Reunion','Espacio_ID','Fecha_Hora_Reunion','Titulo_Reunion','Contacto_Espacio','Codigo_CUT','Participantes','Enlace_Sala','Sala_Presencial','Estado_Reunion','Acuerdos_Pactados','Autor']}
+'Reuniones_Acuerdos':['ID_Reunion','Espacio_ID','Tipo_Registro','Descripcion','Fecha_Hora_Fin','Fecha_Hora_Reunion','Titulo_Reunion','Contacto_Espacio','Codigo_CUT','Participantes','Enlace_Sala','Sala_Presencial','Estado_Reunion','Acuerdos_Pactados','Autor']}
 write('CRM_ANA.pbip',{'version':'1.0','artifacts':[{'report':{'path':'CRM_ANA.Report'}}],'settings':{'enableAutoRecovery':True}})
 write('CRM_ANA.Report/definition.pbir',{'version':'4.0','datasetReference':{'byPath':{'path':'../CRM_ANA.SemanticModel'}}})
 write('CRM_ANA.SemanticModel/definition.pbism',{'version':'4.0','settings':{'qnaEnabled':False}})
@@ -54,7 +54,7 @@ MEASURES={
 for table,fields in SCHEMA.items():
     numbers=fields[1:] if table=='Resumen_KPIs' else []
     dates=[f for f in fields if f=='Fecha_Limite']
-    hours=[f for f in fields if f in ['Fecha_Hora','Fecha_Hora_Reunion','Fecha_Hora_Limite','Ultima_Actualizacion']]
+    hours=[f for f in fields if f in ['Fecha_Hora','Fecha_Hora_Reunion','Fecha_Hora_Fin','Fecha_Hora_Limite','Ultima_Actualizacion']]
     text='table '+table+'\n\tlineageTag: '+uid()+'\n\n'
     for name,formula in MEASURES.get(table,{}).items():
         text+='\tmeasure '+name+' = '+formula+'\n\t\tformatString: '+('0.0%' if name=='Avance' else '#,0')+'\n\t\tlineageTag: '+uid()+'\n\n'

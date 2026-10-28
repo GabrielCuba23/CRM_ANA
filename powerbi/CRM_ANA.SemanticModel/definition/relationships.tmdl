@@ -1,11 +1,11 @@
-relationship e86e89c9-7c06-4d8d-b389-c14bd0aae66d
+relationship ff3c193d-6979-4540-8c4a-89263e14cecd
 	fromColumn: Tareas_y_CUTs.Espacio_ID
 	toColumn: Agenda_Espacios.ID_Espacio
 
-relationship f66aced9-aa50-429c-91a5-76399793fb6a
+relationship 37d8ce59-b043-4655-8122-b47dd5fc7557
 	fromColumn: Bitacora_Historica.Espacio_ID
 	toColumn: Agenda_Espacios.ID_Espacio
 
-relationship 72188330-3f13-449a-bb31-2e3ffe993172
+relationship aab9de07-5991-4ce3-b8ea-08f1d8932e1c
 	fromColumn: Reuniones_Acuerdos.Espacio_ID
 	toColumn: Agenda_Espacios.ID_Espacio

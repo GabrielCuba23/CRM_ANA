@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "CRM & Agenda Cloud - Coordinación ANA (MIDAGRI)",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "minimum_chrome_version": "116",
   "description": "Agenda institucional compartida y panel pasivo de WhatsApp Web.",
   "homepage_url": "https://crm-whatsapp-ana.pages.dev",

@@ -1,6 +1,6 @@
 import {CLOUD_ORIGIN,envelope,matchesEnvelope,cleanChat,cleanPreferences} from './protocol.js';
 const frame=document.getElementById('crm'),loading=document.getElementById('loading'),connection=document.getElementById('connection'),explanation=document.getElementById('explanation'),retry=document.getElementById('retry');
-let channel='',key='',chat=null,ready=false,timer,failed=false;
+let channel='',key='',chat=null,ready=false,timer,failed=false,windowId=null;
 let preferences={};
 try{
  preferences=cleanPreferences({operator:localStorage.getItem('ana.operator'),signature:localStorage.getItem('ana.signature')});
@@ -21,7 +21,7 @@ function connect(){
 window.addEventListener('message',event=>{
  if(event.origin!==CLOUD_ORIGIN||event.source!==frame.contentWindow)return;
  if(matchesEnvelope(event.data,'READY',channel)){
-  clearTimeout(timer);ready=true;failed=false;loading.hidden=true;frame.hidden=false;connection.textContent=navigator.onLine?'En línea':'Sin conexión';sendContext();
+  clearTimeout(timer);ready=true;failed=false;loading.hidden=true;frame.hidden=false;connection.textContent=navigator.onLine?'En línea':'Sin conexión';sendContext();readContext();
  }else if(ready&&matchesEnvelope(event.data,'PREFERENCES',channel)){
   preferences={...preferences,...cleanPreferences(event.data.payload)};
   chrome.storage.local.set({panelPreferences:preferences}).catch(()=>{});
@@ -33,9 +33,9 @@ chrome.storage.onChanged.addListener((changes,area)=>{
 });
 async function readContext(){
  try{
-  const win=await chrome.windows.getCurrent();key='activeWhatsAppChat:'+win.id;
+  if(windowId===null)windowId=(await chrome.windows.getCurrent()).id;key='activeWhatsAppChat:'+windowId;
   const values=await chrome.storage.session.get(key);chat=cleanChat(values[key]??null)??null;sendContext();
-  const tabs=await chrome.tabs.query({active:true,windowId:win.id});
+  const tabs=await chrome.tabs.query({active:true,windowId});
   if(tabs[0]?.id)await chrome.tabs.sendMessage(tabs[0].id,{type:'CRM_READ_CHAT'});
  }catch{chat=null;sendContext();}
 }
@@ -43,7 +43,8 @@ function reload(){if(window.confirm('Se recargará el CRM. Guarda primero los fo
 document.getElementById('reload').addEventListener('click',reload);retry.addEventListener('click',connect);
 window.addEventListener('offline',()=>{connection.textContent='Sin conexión';});
 window.addEventListener('online',()=>{if(failed)connect();else if(ready)connection.textContent='En línea';});
-window.addEventListener('pagehide',()=>{clearTimeout(timer);},{once:true});
+const contextTimer=setInterval(()=>{if(ready&&!document.hidden)readContext();},4000);
+window.addEventListener('pagehide',()=>{clearTimeout(timer);clearInterval(contextTimer);},{once:true});
 async function start(){
  try{const stored=await chrome.storage.local.get('panelPreferences');preferences={...preferences,...cleanPreferences(stored.panelPreferences)};}catch{}
  connect();readContext();

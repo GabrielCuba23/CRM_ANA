@@ -1,46 +1,46 @@
 table Bitacora_Historica
-	lineageTag: a70ad97d-24ba-40a5-8feb-a60a77a4af0e
+	lineageTag: 6ac6317c-ece6-4dcb-adb6-c84f9d822893
 
 	column ID_Nota
 		dataType: string
-		lineageTag: dfb0b3ee-0568-4776-9be6-f1b8b52b6587
+		lineageTag: bd84fbc6-6f67-4512-992a-d9911c6abfbf
 		sourceColumn: ID_Nota
 		summarizeBy: none
 
 	column Espacio_ID
 		dataType: string
-		lineageTag: f4b767a2-59ec-4142-b533-e7f4ea293f98
+		lineageTag: 9cab9790-e272-48a2-8449-69ae334da597
 		sourceColumn: Espacio_ID
 		summarizeBy: none
 
 	column Fecha_Hora
 		dataType: dateTime
-		lineageTag: e56e638d-1a87-43ab-8d09-29398e433217
+		lineageTag: 8300be17-ab0b-49f1-9398-9871f1decb3c
 		sourceColumn: Fecha_Hora
 		summarizeBy: none
 		formatString: yyyy-MM-dd HH:mm
 
 	column Autor_Equipo
 		dataType: string
-		lineageTag: cd40059f-b770-4e09-b4c5-d49cf4d55004
+		lineageTag: d36a6803-c757-459e-9cb2-a2b3825c7e38
 		sourceColumn: Autor_Equipo
 		summarizeBy: none
 
 	column Contacto_Espacio
 		dataType: string
-		lineageTag: 31753e67-158b-40ef-a994-819279e11410
+		lineageTag: 6ac6ba96-cd56-4c5e-8d5a-2e13617191ee
 		sourceColumn: Contacto_Espacio
 		summarizeBy: none
 
 	column Codigo_CUT
 		dataType: string
-		lineageTag: cc647e9d-a893-47a3-8e12-34e40effe052
+		lineageTag: b9aa1440-b14d-4a11-a01b-75b4fea6029e
 		sourceColumn: Codigo_CUT
 		summarizeBy: none
 
 	column Actualizacion_Registrada
 		dataType: string
-		lineageTag: 05ce997c-5d34-4d3c-b503-d927a947d235
+		lineageTag: fb855e55-cfb1-4baa-a73c-e078402efc83
 		sourceColumn: Actualizacion_Registrada
 		summarizeBy: none
 

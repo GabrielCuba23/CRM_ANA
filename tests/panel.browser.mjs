@@ -16,9 +16,9 @@ try{
  await ctx.addInitScript(({base,cloud})=>{
   if(location.origin===base){
    localStorage.setItem('ana.operator','Acxel');localStorage.setItem('ana.signature','false');sessionStorage.setItem('ana.token','no-debe-cruzar');
-   let listener;const key='activeWhatsAppChat:7';
-   window.chrome={windows:{getCurrent:async()=>({id:7})},storage:{local:{get:async()=>({}),set:async value=>{window.savedPreferences=value.panelPreferences;}},session:{get:async()=>({[key]:{rawTitle:'Jaruska',tabId:22}})},onChanged:{addListener:fn=>{listener=fn;}}},tabs:{query:async()=>[{id:22}],sendMessage:async()=>{}}};
-   window.emitContext=(value,area='session')=>listener({[key]:{newValue:value}},area);
+   let listener,currentChat={rawTitle:'Jaruska',tabId:22};const key='activeWhatsAppChat:7';
+   window.chrome={windows:{getCurrent:async()=>({id:7})},storage:{local:{get:async()=>({}),set:async value=>{window.savedPreferences=value.panelPreferences;}},session:{get:async()=>({[key]:currentChat})},onChanged:{addListener:fn=>{listener=fn;}}},tabs:{query:async()=>[{id:22}],sendMessage:async()=>{}}};
+   window.emitContext=(value,area='session')=>{if(area==='session')currentChat=value;listener({[key]:{newValue:value}},area);};
   }else if(location.origin===cloud){
    window.contextMessages=[];window.addEventListener('message',event=>{if(event.data?.type==='CONTEXT')window.contextMessages.push(event.data);});
   }
@@ -33,7 +33,7 @@ try{
  await ctx.route(cloud+'/**',async route=>{
   const request=route.request(),url=new URL(request.url());
   if(waitForCloud&&['/panel','/panel.html'].includes(url.pathname))return route.fulfill({contentType:'text/html',body:'<p>Esperando despliegue de prueba</p>'});
-  if(newRelease&&url.pathname==='/version.json')return route.fulfill({json:{version:'1.2.1',build:'prueba-nuevo-despliegue'}});
+  if(newRelease&&url.pathname==='/version.json')return route.fulfill({json:{version:'1.3.1',build:'prueba-nuevo-despliegue'}});
   const headers={...request.headers()};delete headers.host;delete headers['content-length'];
   const response=await fetch(runtime.base+url.pathname+url.search,{method:request.method(),headers,body:request.method()==='POST'?request.postData():undefined});
   const responseHeaders=Object.fromEntries(response.headers);delete responseHeaders['content-length'];delete responseHeaders['content-encoding'];
@@ -57,7 +57,7 @@ try{
  const embedded=page.frames().find(f=>f.url().startsWith(cloud+'/panel'));
  await embedded.waitForFunction(()=>window.contextMessages.length>0);
  const context=await embedded.evaluate(()=>window.contextMessages.at(-1));assert.equal(JSON.stringify(context).includes('no-debe-cruzar'),false);assert.equal(context.payload.chat.rawTitle,'Jaruska');
- async function receive(data){await embedded.evaluate(({data,origin})=>window.dispatchEvent(new MessageEvent('message',{origin,source:parent,data})),{data,origin:extensionOrigin});}
+ async function receive(data){await embedded.evaluate(({data,origin})=>window.dispatchEvent(new MessageEvent('message',{origin,source:null,data})),{data,origin:extensionOrigin});}
  await receive(context);
  await frame.getByLabel('Token de acceso del equipo').fill(runtime.token);await frame.getByRole('button',{name:'Entrar al espacio de trabajo'}).click();
  await frame.locator('.chat-context strong').getByText('Jaruska',{exact:true}).waitFor();
@@ -70,8 +70,9 @@ try{
  await page.evaluate(()=>window.emitContext({rawTitle:'Otro chat',tabId:22}));
  await embedded.waitForFunction(()=>window.contextMessages.at(-1).payload.chat?.rawTitle==='Otro chat');
  const next=await embedded.evaluate(()=>window.contextMessages.at(-1));await receive(next);await frame.locator('.chat-context strong').getByText('Otro chat',{exact:true}).waitFor();
+ await frame.getByRole('button',{name:'Crear espacio para este chat'}).click();const contactDialog=frame.getByRole('dialog');await contactDialog.getByLabel('Teléfono internacional o ID de grupo').fill('51987654322');await contactDialog.getByRole('button',{name:'Guardar espacio'}).click();await contactDialog.waitFor({state:'hidden'});await frame.locator('.detail h2').getByText('Otro chat',{exact:true}).waitFor();
  await page.evaluate(()=>window.emitContext(null));await embedded.waitForFunction(()=>window.contextMessages.at(-1).payload.chat===null);await receive(await embedded.evaluate(()=>window.contextMessages.at(-1)));
- assert.equal(await frame.locator('.chat-context').count(),0);
+ assert.equal(await frame.locator('.chat-context strong').count(),0);
  await frame.getByRole('button',{name:'Centro de datos',exact:true}).click();const downloading=page.waitForEvent('download');await frame.getByRole('button',{name:'Descargar .xlsx',exact:true}).click();const file=await downloading;assert.ok((await stat(await file.path())).size>1000);
  await page.evaluate(({cloud})=>{
   const frame=document.getElementById('crm'),channel=new URL(frame.src).searchParams.get('bridge');

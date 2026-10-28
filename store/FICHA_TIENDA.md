@@ -39,7 +39,7 @@ No se pide activeTab, tabs, historial, cookies, scripting ni acceso general a ot
 
 ## Arquitectura para la revisión técnica
 
-El service worker valida mensajes de WhatsApp activo y marco principal; solo mantiene títulos temporales. El contenedor local carga un iframe con sandbox al origen HTTPS exacto. El iframe no accede al contexto JavaScript ni a las APIs de la extensión. La conexión postMessage verifica origen, source, nonce y versión. No hay comandos web para invocar APIs Chrome, eval ni script remoto en un contexto privilegiado. La aplicación web y la extensión están disponibles íntegramente en https://github.com/GabrielCuba23/CRM_ANA.
+El service worker valida mensajes de WhatsApp activo y marco principal; solo mantiene títulos temporales. El contenedor local carga un iframe con sandbox al origen HTTPS exacto. El iframe no accede al contexto JavaScript ni a las APIs de la extensión. La conexión postMessage verifica origen, nonce, versión y source cuando el navegador lo expone. No hay comandos web para invocar APIs Chrome, eval ni script remoto en un contexto privilegiado. La aplicación web y la extensión están disponibles íntegramente en https://github.com/GabrielCuba23/CRM_ANA.
 
 El iframe remoto usa la excepción de contexto aislado de las APIs de extensión; decláralo transparentemente en la ficha de revisión de código remoto. La revisión de Google determina si la implementación y finalidad cumplen las políticas vigentes. No declarar que toda la aplicación web está empaquetada localmente.
 

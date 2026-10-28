@@ -64,3 +64,13 @@ El ZIP se prepara con Python y se comprueba con `ZipFile.testzip`. Excluye secre
 - Se preparan iconos 16/32/48/128, ficha, privacidad pública y guía de publicación No listada. No se ha enviado a revisión ni publicado en Chrome Web Store. La revisión puede requerir cuenta y acceso de prueba aislado, que debe configurar el administrador.
 
 La instalación real de 1.2.0, el almacenamiento del iframe con permisos reales de extensión, WhatsApp real y la implementación remota Pages se verifican en el Chrome y la cuenta del administrador. Las pruebas locales no afirman esa validación externa.
+
+## Web 1.3.0 y lector Chrome 1.2.1
+
+- 27 pruebas unitarias aprobadas: se añaden formato ICS seguro y UTF-8, tiempo UTC/duración/Google, eventos generales en recordatorios/reportes, unidades y compatibilidad del puente con source privilegiado null manteniendo origen y nonce.
+- 22 escenarios D1 aprobados: diez originales, siete ampliados y cinco de eventos, revisiones concurrentes, unidades compartidas, borrado de notas y respaldo v3 con restauración de v2.
+- Cuatro recorridos de navegador: CRM original, avisos/tareas ampliados, contenedor cloud y Agenda/unidades/bitácora/Tareas unificadas. El contenedor prueba cambio de chat, creación de ficha y selección inmediata.
+- El lector pasivo se ejecuta en DOM simulado con encabezado principal y alternativa role=main; conserva el HTML y elige el título por encima del estado en línea.
+- Un lector independiente Python icalendar reconoce el archivo descargado, inicio/fin UTC y texto Unicode. Google/Apple/Outlook reales requieren confirmar/importar desde la cuenta o aplicación del usuario; no se crean eventos externos durante las pruebas.
+- Migración de eventos aditiva e idempotente verificada sobre una base anterior sin pérdida de contactos. El respaldo incluye las unidades personalizadas y eventos sin contacto.
+- El motivo exacto del fallo de la captura no se confirma sin su sesión Chrome. Se añade recuperación del puente, repetición del contexto y lectura periódica sin alterar WhatsApp. El administrador debe recargar también la pestaña WhatsApp tras instalar el lector nuevo.
