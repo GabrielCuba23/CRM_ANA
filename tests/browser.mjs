@@ -18,6 +18,20 @@ try{
  await page.getByLabel('Token de acceso del equipo').fill(runtime.token);
  await page.getByRole('button',{name:'Entrar al espacio de trabajo'}).click();
  await page.getByRole('heading',{name:'Directorio de espacios'}).waitFor();
+ let failSync=true,syncAttempts=0;
+ const syncOutage=async route=>{
+  if(failSync&&route.request().method()==='GET'){syncAttempts++;await route.fulfill({status:503,contentType:'text/html',headers:{'Retry-After':'0'},body:'<html>Servicio temporalmente no disponible</html>'});}
+  else await route.continue();
+ };
+ await page.route('**/api/sync',syncOutage);
+ await page.getByRole('button',{name:'Actualizar',exact:true}).click();
+ await page.getByRole('alert').filter({hasText:'HTTP 503'}).waitFor();
+ assert.equal(syncAttempts,2,'Una consulta fallida se reintenta una sola vez');
+ await page.waitForFunction(()=>document.querySelector('.sync-line')?.textContent.includes('Sin conexión confirmada'));
+ failSync=false;await page.getByRole('button',{name:'Actualizar',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('.sync-line')?.textContent.includes('Sincronizado'));
+ assert.equal(await page.getByRole('alert').count(),0,'El aviso de sincronización desaparece al recuperarse');
+ await page.unroute('**/api/sync',syncOutage);
  await page.getByLabel('¿Quién opera esta PC?').selectOption('Marco');
  const expectedOperators=['Hanz','Fernando','Acxel','Andrés','Shirley','Jaruska','Marco','Alejandra','Marcelo','Luciano','Sheila','Cristina'];
  assert.deepEqual(await page.locator('#operator option').allTextContents(),['Elegir operador',...expectedOperators]);
@@ -43,6 +57,22 @@ try{
  await dialog.getByRole('button',{name:'Guardar espacio'}).click();await dialog.waitFor({state:'hidden'});
  await page.locator('.space-card').filter({hasText:'Coordinación ALA Huallaga'}).click();
  await page.getByLabel('Nueva nota').fill('Validar aforo y preparar el informe para la dirección.');
+ let noteAttempts=0;
+ const noteOutage=async route=>{
+  if(route.request().method()==='POST'&&route.request().postDataJSON()?.action==='ADD_NOTE'){
+   noteAttempts++;await route.fulfill({status:502,contentType:'text/html',body:'<html>Bad gateway</html>'});
+  }else await route.continue();
+ };
+ await page.route('**/api/sync',noteOutage);
+ await page.getByRole('button',{name:'Registrar nota'}).click();
+ await page.getByRole('alert').filter({hasText:'HTTP 502'}).waitFor();
+ assert.equal(noteAttempts,1,'Las escrituras no se reintentan automáticamente');
+ assert.equal(await page.getByLabel('Nueva nota').inputValue(),'Validar aforo y preparar el informe para la dirección.');
+ await page.getByRole('button',{name:'Actualizar',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('.sync-line')?.textContent.includes('Sincronizado'));
+ assert.equal(await page.getByRole('alert').filter({hasText:'HTTP 502'}).count(),1,'Consultar con éxito no oculta un guardado sin confirmar');
+ await page.unroute('**/api/sync',noteOutage);
+ await page.getByRole('button',{name:'Cerrar aviso',exact:true}).click();
  await page.getByRole('button',{name:'Registrar nota'}).click();await page.locator('.timeline').getByText('Validar aforo y preparar el informe para la dirección.').waitFor();
  await page.getByRole('button',{name:'Tareas',exact:true}).click();
  await page.getByLabel('Nueva tarea').fill('Revisar expediente técnico');

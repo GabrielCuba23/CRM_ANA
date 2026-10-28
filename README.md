@@ -64,6 +64,12 @@ Los teléfonos se normalizan quitando espacios y signos, sin inventar prefijos i
 
 `Abrir borrador en WhatsApp` abre un enlace oficial con texto preparado. Para grupos el destinatario se elige manualmente. No confirma ni automatiza el envío. La bitácora registra «borrador abierto» o «texto copiado», sin afirmar que el mensaje se entregó.
 
+## Actualizar la extensión
+
+La versión 1.0.1 mejora la recuperación de la sincronización. Además del ZIP completo, `npm run package` genera `artifacts/crm-ana-extension.zip`, que contiene directamente `manifest.json`, `index.html`, los scripts y `assets/`. Para una instalación nueva, descomprime ese ZIP y selecciona su carpeta en «Cargar descomprimida». Para actualizar una instalación conservando su configuración, cierra el panel, sustituye los archivos de su carpeta por los del ZIP nuevo y pulsa el botón de recarga de la extensión en el administrador de Chrome. La tarjeta debe mostrar versión 1.0.1. La web se actualiza mediante el despliegue de Pages; los archivos de una extensión descomprimida se actualizan en cada PC.
+
+Las consultas fallidas por red o errores temporales se reintentan una sola vez; no se superponen consultas de sincronización. Al recuperarse la lectura, se retira el aviso correspondiente. Los guardados no se reintentan automáticamente ni se consideran confirmados por una lectura posterior. Si el servidor devuelve HTML en vez de JSON, el aviso muestra el código HTTP y una indicación para comprobar la conexión o la configuración.
+
 ## Operadores del equipo
 
 La lista inicial contiene Hanz, Fernando, Acxel, Andrés, Shirley, Jaruska, Marco, Alejandra, Marcelo, Luciano, Sheila y Cristina. Selecciona tu nombre en «¿Quién opera esta PC?». Para agregar más personas, pulsa el botón **+** junto al selector, escribe el nombre y pulsa **Crear operador**; el cambio se guarda en D1 y se comparte con todas las PC.

@@ -29,3 +29,17 @@ output.with_suffix('.zip.sha256').write_text(digest + '  ' + output.name + '\n')
 print(str(output))
 print('Bytes: ' + str(output.stat().st_size))
 print('SHA-256: ' + digest)
+
+extension_output = output.parent / 'crm-ana-extension.zip'
+with zipfile.ZipFile(extension_output, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+    for path in sorted((root / 'extension-dist').rglob('*')):
+        if path.is_file() and not path.is_symlink():
+            archive.write(path, path.relative_to(root / 'extension-dist').as_posix())
+with zipfile.ZipFile(extension_output) as archive:
+    assert archive.testzip() is None
+    assert 'manifest.json' in archive.namelist()
+extension_digest = hashlib.sha256(extension_output.read_bytes()).hexdigest()
+extension_output.with_suffix('.zip.sha256').write_text(extension_digest + '  ' + extension_output.name + '\n')
+print(str(extension_output))
+print('Bytes: ' + str(extension_output.stat().st_size))
+print('SHA-256: ' + extension_digest)

@@ -5,7 +5,7 @@ Verificado el 27 de octubre de 2026 en el entorno cloud, con Node 24.19.0 y Chro
 - Instalación repetible mediante `npm ci` con lockfile: completada.
 - Migraciones D1 locales iniciales y segunda ejecución sin cambios: completadas, sin pérdida de datos.
 - Compilación Vite y extensión autocontenida: completadas.
-- 9 pruebas unitarias: aprobadas (búsqueda, identidad de contacto, minutas, copia JSON, libro Excel, manifiesto, service worker y actualización única de operadores con conservación del historial).
+- 14 pruebas unitarias: aprobadas (búsqueda, identidad de contacto, minutas, copia JSON, libro Excel, manifiesto, service worker y actualización única de operadores con conservación del historial).
 - 10 escenarios API contra D1 local real de Wrangler: aprobados (autenticación, CRUD y conflictos, autoría, presencia, Power BI, respaldo, restauración, validaciones, altas/bajas persistentes de operadores y CORS).
 - Recorrido Playwright en navegador: aprobado (login erróneo/correcto, operador, alta de contacto, nota, tarea, casilla completada, reunión y acuerdos, minuta, firma, formato, dos PC con colisión, vista móvil, búsqueda global, Kanban, Excel real de cinco hojas, copia JSON y restauración).
 - Lector pasivo ejecutado en DOM simulado de navegador: aprobado; lectura inicial, cambio de título, limpieza al cerrar y comprobación de que no modifica el contenido.
@@ -34,3 +34,10 @@ El ZIP se prepara con Python y se comprueba con `ZipFile.testzip`. Excluye secre
 - Se verificó la actualización de una base anterior, conservando operadores personalizados, contactos, autoría histórica y asignaciones activas.
 - Se verificó que las altas y bajas posteriores no se vuelvan a sustituir y que restaurar un JSON conserve la lista exacta de esa copia.
 - En navegador se creó un operador con el botón +, se seleccionó y se comprobó su persistencia tras recargar.
+
+## Recuperación de sincronización (extensión 1.0.1)
+
+- Probados reintento único de consulta HTML 503, no repetición de escrituras HTML 502, respuesta HTML 200, rechazo 403, espera indicada por 429 y cancelación de consultas sin filtrar credenciales.
+- En navegador se provocó una respuesta HTML 503 y se comprobó que el estado de conexión y su aviso se recuperan al volver JSON válido.
+- Se provocó un fallo HTML 502 al registrar una nota: no hubo reenvío automático, se conservó el borrador y una consulta exitosa no ocultó la falta de confirmación del guardado.
+- El aviso original de la captura no aporta código HTTP. No se confirmó la causa de la respuesta de producción: la red del entorno cloud bloquea el destino Pages. La nueva versión permite obtener ese código sin mostrar el contenido HTML ni el token.

@@ -16,15 +16,28 @@ export default function App(){
  const [view,setView]=useState('Directorio'),[search,setSearch]=useState(''),[tray,setTray]=useState('Todos'),[selected,setSelected]=useState('');
  const [spaceForm,setSpaceForm]=useState(null),[teamOpen,setTeamOpen]=useState(false),[busy,setBusy]=useState(false),[presence,setPresence]=useState([]),[chat,setChat]=useState(null);
  const [message,setMessage]=useState(null),[online,setOnline]=useState(false),[presenceOk,setPresenceOk]=useState(true),[lastSync,setLastSync]=useState(null);
- const matched=useRef(''),mutation=useRef(false),loadGeneration=useRef(0);
- const notify=useCallback((text,error=false)=>setMessage({text,error}),[]);
+ const matched=useRef(''),mutation=useRef(false),loadGeneration=useRef(0),syncInFlight=useRef(false),syncAbort=useRef(null);
+ const notify=useCallback((text,error=false)=>setMessage({text,error,scope:'action'}),[]);
  const load=useCallback(async()=>{
   if(!session)return;
   const generation=++loadGeneration.current;
-  try{const state=await request(session.base,session.token,'sync');if(generation===loadGeneration.current){setData(state);setLoaded(true);setOnline(true);setLastSync(new Date());}}
-  catch(e){setOnline(false);notify(e.message,true);}
- },[session,notify]);
- useEffect(()=>{if(!session)return;load();const timer=setInterval(()=>{if(!mutation.current)load();},12000);return()=>{clearInterval(timer);loadGeneration.current++;};},[session,load]);
+  syncAbort.current?.abort();
+  const controller=new AbortController();syncAbort.current=controller;syncInFlight.current=true;
+  try{
+   const state=await request(session.base,session.token,'sync',undefined,{signal:controller.signal});
+   if(generation===loadGeneration.current){
+    setData(state);setLoaded(true);setOnline(true);setLastSync(new Date());
+    setMessage(previous=>previous?.scope==='sync'?null:previous);
+   }
+  }catch(e){
+   if(!controller.signal.aborted&&generation===loadGeneration.current){setOnline(false);setMessage(previous=>previous?.scope==='action'&&previous.error?previous:{text:e.message,error:true,scope:'sync'});}
+  }finally{if(generation===loadGeneration.current)syncInFlight.current=false;}
+ },[session]);
+ useEffect(()=>{
+  if(!session)return;load();
+  const timer=setInterval(()=>{if(!mutation.current&&!syncInFlight.current)load();},12000);
+  return()=>{clearInterval(timer);loadGeneration.current++;syncAbort.current?.abort();syncAbort.current=null;syncInFlight.current=false;};
+ },[session,load]);
  useEffect(()=>{if(loaded&&operator&&!data.members.includes(operator)){setOperator('');localStorage.removeItem('ana.operator');}},[loaded,data.members,operator]);
  useEffect(()=>{
   if(!isExtension)return;
@@ -51,7 +64,7 @@ export default function App(){
  async function act(action,payload){
   if(!operator){notify('Elige quién opera esta PC antes de registrar cambios.',true);return false;}
   if(mutation.current)return false;
-  mutation.current=true;setBusy(true);loadGeneration.current++;
+  mutation.current=true;setBusy(true);loadGeneration.current++;syncAbort.current?.abort();syncInFlight.current=false;
   try{await request(session.base,session.token,'sync',{action,payload,operator_name:operator});await load();return true;}
   catch(e){notify(e.message,true);return false;}finally{mutation.current=false;setBusy(false);}
  }
