@@ -1,0 +1,27 @@
+expression pOrigen = "API" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true, List={"API", "Excel"}]
+
+expression pBaseUrl = "https://crm-whatsapp-ana.pages.dev" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+
+expression pTeamToken = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+
+expression pArchivoExcel = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=false]
+
+expression FuenteAPI =
+	if pOrigen = "Excel" then [] else
+	if Text.Length(pTeamToken) < 24 then error "Configura pTeamToken en Transformar datos > Administrar parámetros." else
+	Json.Document(Web.Contents(pBaseUrl, [RelativePath="api/powerbi", Headers=[#"X-Team-Token"=pTeamToken]]))
+
+expression CargarTabla =
+	(apiKey as text, campos as list, numeros as list, fechas as list, horas as list) as table =>
+	let
+		Origen = if pOrigen = "Excel" then
+			if pArchivoExcel = "" then error "Configura pArchivoExcel con la ruta del reporte .xlsx." else
+			Excel.Workbook(File.Contents(pArchivoExcel), null, true){[Item=apiKey, Kind="Table"]}[Data]
+		else Table.FromRecords(Record.FieldOrDefault(FuenteAPI, apiKey, {}), campos, MissingField.UseNull),
+		Columnas = Table.SelectColumns(Origen, campos, MissingField.UseNull),
+		Filas = Table.SelectRows(Columnas, each Record.Field(_, campos{0}) <> null and Text.From(Record.Field(_, campos{0})) <> ""),
+		Numeros = Table.TransformColumnTypes(Filas, List.Transform(numeros, each {_, Int64.Type}), "es-PE"),
+		Fechas = Table.TransformColumns(Numeros, List.Transform(fechas, (c) => {c, (v) => if v = null or v = "" then null else Date.From(v), type nullable date})),
+		Horas = Table.TransformColumns(Fechas, List.Transform(horas, (c) => {c, (v) => if v = null or v = "" then null else DateTimeZone.RemoveZone(DateTimeZone.SwitchZone(DateTimeZone.From(v), -5)), type nullable datetime})),
+		Textos = Table.TransformColumnTypes(Horas, List.Transform(List.Difference(campos, List.Combine({numeros,fechas,horas})), each {_, type text}), "es-PE")
+	in Textos

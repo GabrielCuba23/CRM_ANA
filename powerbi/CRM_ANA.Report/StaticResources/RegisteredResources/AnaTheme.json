@@ -1,0 +1,14 @@
+{
+  "name": "ANA Azul",
+  "dataColors": [
+    "#2957A4",
+    "#17345E",
+    "#6E94D0",
+    "#A9C0E5",
+    "#B84A3B",
+    "#D4A23B"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#263B5C",
+  "tableAccent": "#2957A4"
+}

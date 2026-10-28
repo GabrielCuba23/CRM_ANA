@@ -1,0 +1,253 @@
+{
+  "config": "{\"version\":\"5.43\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY23SU04\",\"version\":\"5.43\",\"type\":2},\"customTheme\":{\"name\":\"AnaTheme.json\",\"version\":\"5.43\",\"type\":1}},\"activeSectionIndex\":0}",
+  "filters": "[]",
+  "layoutOptimization": 0,
+  "pods": [],
+  "publicCustomVisuals": [],
+  "resourcePackages": [
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "CY23SU04",
+            "path": "BaseThemes/CY23SU04.json",
+            "type": 202
+          }
+        ],
+        "name": "SharedResources",
+        "type": 2
+      }
+    },
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "AnaTheme.json",
+            "path": "AnaTheme.json",
+            "type": 201
+          }
+        ],
+        "name": "RegisteredResources",
+        "type": 1
+      }
+    }
+  ],
+  "sections": [
+    {
+      "config": "{}",
+      "displayName": "Resumen ejecutivo",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720,
+      "name": "ReportSection0",
+      "ordinal": 0,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"b91209058561424ea159\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":20,\"z\":1000,\"width\":300,\"height\":120,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"card\",\"projections\":{\"Values\":[{\"queryRef\":\"Agenda_Espacios.Coordinaciones_activas\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Agenda_Espacios\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Coordinaciones_activas\"},\"Name\":\"Agenda_Espacios.Coordinaciones_activas\",\"NativeReferenceName\":\"Coordinaciones_activas\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Coordinaciones activas'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 120,
+          "width": 300,
+          "x": 20,
+          "y": 20,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"9574c335481349b89d89\",\"layouts\":[{\"id\":0,\"position\":{\"x\":335,\"y\":20,\"z\":1000,\"width\":300,\"height\":120,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"card\",\"projections\":{\"Values\":[{\"queryRef\":\"Tareas_y_CUTs.Tareas_pendientes\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Tareas_y_CUTs\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Tareas_pendientes\"},\"Name\":\"Tareas_y_CUTs.Tareas_pendientes\",\"NativeReferenceName\":\"Tareas_pendientes\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Tareas pendientes'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 120,
+          "width": 300,
+          "x": 335,
+          "y": 20,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"5743bac891b540a9a452\",\"layouts\":[{\"id\":0,\"position\":{\"x\":650,\"y\":20,\"z\":1000,\"width\":300,\"height\":120,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"card\",\"projections\":{\"Values\":[{\"queryRef\":\"Tareas_y_CUTs.Tareas_vencidas\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Tareas_y_CUTs\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Tareas_vencidas\"},\"Name\":\"Tareas_y_CUTs.Tareas_vencidas\",\"NativeReferenceName\":\"Tareas_vencidas\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Tareas vencidas'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 120,
+          "width": 300,
+          "x": 650,
+          "y": 20,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"1383994732fb48df8518\",\"layouts\":[{\"id\":0,\"position\":{\"x\":965,\"y\":20,\"z\":1000,\"width\":300,\"height\":120,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"card\",\"projections\":{\"Values\":[{\"queryRef\":\"Tareas_y_CUTs.Avance\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Tareas_y_CUTs\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Avance\"},\"Name\":\"Tareas_y_CUTs.Avance\",\"NativeReferenceName\":\"Avance\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Avance de tareas'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 120,
+          "width": 300,
+          "x": 965,
+          "y": 20,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"265281c65557486693d0\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":160,\"z\":1000,\"width\":600,\"height\":270,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"clusteredBarChart\",\"projections\":{\"Category\":[{\"queryRef\":\"Resumen_KPIs.Integrante_Equipo\",\"active\":true}],\"Y\":[{\"queryRef\":\"Resumen_KPIs.Carga_pendiente\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Resumen_KPIs\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Integrante_Equipo\"},\"Name\":\"Resumen_KPIs.Integrante_Equipo\",\"NativeReferenceName\":\"Integrante_Equipo\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Carga_pendiente\"},\"Name\":\"Resumen_KPIs.Carga_pendiente\",\"NativeReferenceName\":\"Carga_pendiente\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Carga por integrante'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 270,
+          "width": 600,
+          "x": 20,
+          "y": 160,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"8b3aa997b1ea480da54e\",\"layouts\":[{\"id\":0,\"position\":{\"x\":640,\"y\":160,\"z\":1000,\"width\":620,\"height\":270,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"clusteredBarChart\",\"projections\":{\"Category\":[{\"queryRef\":\"Agenda_Espacios.Estado_Gestion\",\"active\":true}],\"Y\":[{\"queryRef\":\"Agenda_Espacios.Coordinaciones\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Agenda_Espacios\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Estado_Gestion\"},\"Name\":\"Agenda_Espacios.Estado_Gestion\",\"NativeReferenceName\":\"Estado_Gestion\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Coordinaciones\"},\"Name\":\"Agenda_Espacios.Coordinaciones\",\"NativeReferenceName\":\"Coordinaciones\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Estados de coordinación'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 270,
+          "width": 620,
+          "x": 640,
+          "y": 160,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"08a7ab8609a64fd1afcc\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":450,\"z\":1000,\"width\":1240,\"height\":240,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"Resumen_KPIs.Integrante_Equipo\"},{\"queryRef\":\"Resumen_KPIs.Espacios_Asignados\"},{\"queryRef\":\"Resumen_KPIs.Coordinaciones_Urgentes\"},{\"queryRef\":\"Resumen_KPIs.Para_Visto_Bueno\"},{\"queryRef\":\"Resumen_KPIs.Tareas_Pendientes\"},{\"queryRef\":\"Resumen_KPIs.Tareas_Completadas\"},{\"queryRef\":\"Resumen_KPIs.Porcentaje_Avance\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Resumen_KPIs\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Integrante_Equipo\"},\"Name\":\"Resumen_KPIs.Integrante_Equipo\",\"NativeReferenceName\":\"Integrante_Equipo\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Espacios_Asignados\"},\"Name\":\"Resumen_KPIs.Espacios_Asignados\",\"NativeReferenceName\":\"Espacios_Asignados\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Coordinaciones_Urgentes\"},\"Name\":\"Resumen_KPIs.Coordinaciones_Urgentes\",\"NativeReferenceName\":\"Coordinaciones_Urgentes\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Para_Visto_Bueno\"},\"Name\":\"Resumen_KPIs.Para_Visto_Bueno\",\"NativeReferenceName\":\"Para_Visto_Bueno\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Tareas_Pendientes\"},\"Name\":\"Resumen_KPIs.Tareas_Pendientes\",\"NativeReferenceName\":\"Tareas_Pendientes\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Tareas_Completadas\"},\"Name\":\"Resumen_KPIs.Tareas_Completadas\",\"NativeReferenceName\":\"Tareas_Completadas\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Porcentaje_Avance\"},\"Name\":\"Resumen_KPIs.Porcentaje_Avance\",\"NativeReferenceName\":\"Porcentaje_Avance\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Resumen por operador'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 240,
+          "width": 1240,
+          "x": 20,
+          "y": 450,
+          "z": 1000
+        }
+      ],
+      "width": 1280
+    },
+    {
+      "config": "{}",
+      "displayName": "Tareas y CUT",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720,
+      "name": "ReportSection1",
+      "ordinal": 1,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"6262a8b2e8484bc285f8\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":20,\"z\":1000,\"width\":240,\"height\":170,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Tareas_y_CUTs.Responsable\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Tareas_y_CUTs\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Responsable\"},\"Name\":\"Tareas_y_CUTs.Responsable\",\"NativeReferenceName\":\"Responsable\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Responsable'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 170,
+          "width": 240,
+          "x": 20,
+          "y": 20,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"1f90a6fe3021417b8884\",\"layouts\":[{\"id\":0,\"position\":{\"x\":280,\"y\":20,\"z\":1000,\"width\":260,\"height\":170,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Tareas_y_CUTs.Estado\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Tareas_y_CUTs\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Estado\"},\"Name\":\"Tareas_y_CUTs.Estado\",\"NativeReferenceName\":\"Estado\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Estado'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 170,
+          "width": 260,
+          "x": 280,
+          "y": 20,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"5ee982b24b9e40718ae2\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":210,\"z\":1000,\"width\":1240,\"height\":480,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"Tareas_y_CUTs.Contacto_Espacio\"},{\"queryRef\":\"Tareas_y_CUTs.Codigo_CUT\"},{\"queryRef\":\"Tareas_y_CUTs.Descripcion_Tarea\"},{\"queryRef\":\"Tareas_y_CUTs.Responsable\"},{\"queryRef\":\"Tareas_y_CUTs.Fecha_Limite\"},{\"queryRef\":\"Tareas_y_CUTs.Estado\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Tareas_y_CUTs\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Contacto_Espacio\"},\"Name\":\"Tareas_y_CUTs.Contacto_Espacio\",\"NativeReferenceName\":\"Contacto_Espacio\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Codigo_CUT\"},\"Name\":\"Tareas_y_CUTs.Codigo_CUT\",\"NativeReferenceName\":\"Codigo_CUT\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Descripcion_Tarea\"},\"Name\":\"Tareas_y_CUTs.Descripcion_Tarea\",\"NativeReferenceName\":\"Descripcion_Tarea\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Responsable\"},\"Name\":\"Tareas_y_CUTs.Responsable\",\"NativeReferenceName\":\"Responsable\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Fecha_Limite\"},\"Name\":\"Tareas_y_CUTs.Fecha_Limite\",\"NativeReferenceName\":\"Fecha_Limite\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Estado\"},\"Name\":\"Tareas_y_CUTs.Estado\",\"NativeReferenceName\":\"Estado\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Seguimiento de tareas'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 480,
+          "width": 1240,
+          "x": 20,
+          "y": 210,
+          "z": 1000
+        }
+      ],
+      "width": 1280
+    },
+    {
+      "config": "{}",
+      "displayName": "Directorio",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720,
+      "name": "ReportSection2",
+      "ordinal": 2,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"37c512b320b24195afa8\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":20,\"z\":1000,\"width\":260,\"height\":170,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Agenda_Espacios.Organo_Unidad\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Agenda_Espacios\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Organo_Unidad\"},\"Name\":\"Agenda_Espacios.Organo_Unidad\",\"NativeReferenceName\":\"Organo_Unidad\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Órgano / Unidad'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 170,
+          "width": 260,
+          "x": 20,
+          "y": 20,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"23cb5779cff64e208458\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":210,\"z\":1000,\"width\":1240,\"height\":480,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"Agenda_Espacios.Nombre_Contacto_o_Grupo\"},{\"queryRef\":\"Agenda_Espacios.Cargo\"},{\"queryRef\":\"Agenda_Espacios.Organo_Unidad\"},{\"queryRef\":\"Agenda_Espacios.Oficina\"},{\"queryRef\":\"Agenda_Espacios.Correo\"},{\"queryRef\":\"Agenda_Espacios.Anexo\"},{\"queryRef\":\"Agenda_Espacios.Codigo_CUT\"},{\"queryRef\":\"Agenda_Espacios.Estado_Gestion\"},{\"queryRef\":\"Agenda_Espacios.Responsables_Equipo\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Agenda_Espacios\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Nombre_Contacto_o_Grupo\"},\"Name\":\"Agenda_Espacios.Nombre_Contacto_o_Grupo\",\"NativeReferenceName\":\"Nombre_Contacto_o_Grupo\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Cargo\"},\"Name\":\"Agenda_Espacios.Cargo\",\"NativeReferenceName\":\"Cargo\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Organo_Unidad\"},\"Name\":\"Agenda_Espacios.Organo_Unidad\",\"NativeReferenceName\":\"Organo_Unidad\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Oficina\"},\"Name\":\"Agenda_Espacios.Oficina\",\"NativeReferenceName\":\"Oficina\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Correo\"},\"Name\":\"Agenda_Espacios.Correo\",\"NativeReferenceName\":\"Correo\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Anexo\"},\"Name\":\"Agenda_Espacios.Anexo\",\"NativeReferenceName\":\"Anexo\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Codigo_CUT\"},\"Name\":\"Agenda_Espacios.Codigo_CUT\",\"NativeReferenceName\":\"Codigo_CUT\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Estado_Gestion\"},\"Name\":\"Agenda_Espacios.Estado_Gestion\",\"NativeReferenceName\":\"Estado_Gestion\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Responsables_Equipo\"},\"Name\":\"Agenda_Espacios.Responsables_Equipo\",\"NativeReferenceName\":\"Responsables_Equipo\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Agenda institucional'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 480,
+          "width": 1240,
+          "x": 20,
+          "y": 210,
+          "z": 1000
+        }
+      ],
+      "width": 1280
+    },
+    {
+      "config": "{}",
+      "displayName": "Reuniones",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720,
+      "name": "ReportSection3",
+      "ordinal": 3,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"e1e1a4c339f34d97ac03\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":20,\"z\":1000,\"width\":600,\"height\":230,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"clusteredBarChart\",\"projections\":{\"Category\":[{\"queryRef\":\"Reuniones_Acuerdos.Estado_Reunion\",\"active\":true}],\"Y\":[{\"queryRef\":\"Reuniones_Acuerdos.Cantidad_reuniones\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Reuniones_Acuerdos\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Estado_Reunion\"},\"Name\":\"Reuniones_Acuerdos.Estado_Reunion\",\"NativeReferenceName\":\"Estado_Reunion\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Cantidad_reuniones\"},\"Name\":\"Reuniones_Acuerdos.Cantidad_reuniones\",\"NativeReferenceName\":\"Cantidad_reuniones\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Estado de reuniones'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 230,
+          "width": 600,
+          "x": 20,
+          "y": 20,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"a3a6726d6cbd47d4907e\",\"layouts\":[{\"id\":0,\"position\":{\"x\":660,\"y\":20,\"z\":1000,\"width\":270,\"height\":230,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Reuniones_Acuerdos.Estado_Reunion\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Reuniones_Acuerdos\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Estado_Reunion\"},\"Name\":\"Reuniones_Acuerdos.Estado_Reunion\",\"NativeReferenceName\":\"Estado_Reunion\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Filtrar reuniones'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 230,
+          "width": 270,
+          "x": 660,
+          "y": 20,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"75dd04384f404f3ea8fb\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":270,\"z\":1000,\"width\":1240,\"height\":420,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"Reuniones_Acuerdos.Fecha_Hora_Reunion\"},{\"queryRef\":\"Reuniones_Acuerdos.Titulo_Reunion\"},{\"queryRef\":\"Reuniones_Acuerdos.Contacto_Espacio\"},{\"queryRef\":\"Reuniones_Acuerdos.Participantes\"},{\"queryRef\":\"Reuniones_Acuerdos.Estado_Reunion\"},{\"queryRef\":\"Reuniones_Acuerdos.Acuerdos_Pactados\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Reuniones_Acuerdos\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Fecha_Hora_Reunion\"},\"Name\":\"Reuniones_Acuerdos.Fecha_Hora_Reunion\",\"NativeReferenceName\":\"Fecha_Hora_Reunion\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Titulo_Reunion\"},\"Name\":\"Reuniones_Acuerdos.Titulo_Reunion\",\"NativeReferenceName\":\"Titulo_Reunion\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Contacto_Espacio\"},\"Name\":\"Reuniones_Acuerdos.Contacto_Espacio\",\"NativeReferenceName\":\"Contacto_Espacio\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Participantes\"},\"Name\":\"Reuniones_Acuerdos.Participantes\",\"NativeReferenceName\":\"Participantes\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Estado_Reunion\"},\"Name\":\"Reuniones_Acuerdos.Estado_Reunion\",\"NativeReferenceName\":\"Estado_Reunion\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Acuerdos_Pactados\"},\"Name\":\"Reuniones_Acuerdos.Acuerdos_Pactados\",\"NativeReferenceName\":\"Acuerdos_Pactados\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Reuniones y acuerdos'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 420,
+          "width": 1240,
+          "x": 20,
+          "y": 270,
+          "z": 1000
+        }
+      ],
+      "width": 1280
+    },
+    {
+      "config": "{}",
+      "displayName": "Bitácora",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720,
+      "name": "ReportSection4",
+      "ordinal": 4,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"c9825d22c4d94c88b94a\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":20,\"z\":1000,\"width\":270,\"height\":170,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Bitacora_Historica.Autor_Equipo\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Bitacora_Historica\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Autor_Equipo\"},\"Name\":\"Bitacora_Historica.Autor_Equipo\",\"NativeReferenceName\":\"Autor_Equipo\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Autor'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 170,
+          "width": 270,
+          "x": 20,
+          "y": 20,
+          "z": 1000
+        },
+        {
+          "config": "{\"name\":\"41ffcd94ed0c4fffaad6\",\"layouts\":[{\"id\":0,\"position\":{\"x\":20,\"y\":210,\"z\":1000,\"width\":1240,\"height\":480,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"Bitacora_Historica.Fecha_Hora\"},{\"queryRef\":\"Bitacora_Historica.Autor_Equipo\"},{\"queryRef\":\"Bitacora_Historica.Contacto_Espacio\"},{\"queryRef\":\"Bitacora_Historica.Codigo_CUT\"},{\"queryRef\":\"Bitacora_Historica.Actualizacion_Registrada\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"t0\",\"Entity\":\"Bitacora_Historica\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Fecha_Hora\"},\"Name\":\"Bitacora_Historica.Fecha_Hora\",\"NativeReferenceName\":\"Fecha_Hora\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Autor_Equipo\"},\"Name\":\"Bitacora_Historica.Autor_Equipo\",\"NativeReferenceName\":\"Autor_Equipo\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Contacto_Espacio\"},\"Name\":\"Bitacora_Historica.Contacto_Espacio\",\"NativeReferenceName\":\"Contacto_Espacio\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Codigo_CUT\"},\"Name\":\"Bitacora_Historica.Codigo_CUT\",\"NativeReferenceName\":\"Codigo_CUT\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t0\"}},\"Property\":\"Actualizacion_Registrada\"},\"Name\":\"Bitacora_Historica.Actualizacion_Registrada\",\"NativeReferenceName\":\"Actualizacion_Registrada\"}]},\"drillFilterOtherVisuals\":true,\"vcObjects\":{\"title\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"text\":{\"expr\":{\"Literal\":{\"Value\":\"'Actualizaciones internas'\"}}}}}]},\"objects\":{\"dataPoint\":[{\"properties\":{\"defaultColor\":{\"solid\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'#2957A4'\"}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 480,
+          "width": 1240,
+          "x": 20,
+          "y": 210,
+          "z": 1000
+        }
+      ],
+      "width": 1280
+    }
+  ],
+  "theme": "AnaTheme.json"
+}

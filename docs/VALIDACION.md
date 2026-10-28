@@ -5,8 +5,8 @@ Verificado el 27 de octubre de 2026 en el entorno cloud, con Node 24.19.0 y Chro
 - Instalación repetible mediante `npm ci` con lockfile: completada.
 - Migraciones D1 locales iniciales y segunda ejecución sin cambios: completadas, sin pérdida de datos.
 - Compilación Vite y extensión autocontenida: completadas.
-- 14 pruebas unitarias: aprobadas (búsqueda, identidad de contacto, minutas, copia JSON, libro Excel, manifiesto, service worker y actualización única de operadores con conservación del historial).
-- 10 escenarios API contra D1 local real de Wrangler: aprobados (autenticación, CRUD y conflictos, autoría, presencia, Power BI, respaldo, restauración, validaciones, altas/bajas persistentes de operadores y CORS).
+- 21 pruebas unitarias: aprobadas (búsqueda, identidad de contacto, minutas, copia JSON, libro Excel, manifiesto, service worker y actualización única de operadores con conservación del historial).
+- 17 escenarios API contra D1 local real de Wrangler: aprobados (autenticación, CRUD y conflictos, autoría, presencia, Power BI, respaldo, restauración, validaciones, altas/bajas persistentes de operadores y CORS).
 - Recorrido Playwright en navegador: aprobado (login erróneo/correcto, operador, alta de contacto, nota, tarea, casilla completada, reunión y acuerdos, minuta, firma, formato, dos PC con colisión, vista móvil, búsqueda global, Kanban, Excel real de cinco hojas, copia JSON y restauración).
 - Lector pasivo ejecutado en DOM simulado de navegador: aprobado; lectura inicial, cambio de título, limpieza al cerrar y comprobación de que no modifica el contenido.
 - `npm audit`: cero vulnerabilidades reportadas en las dependencias instaladas, incluidas las de desarrollo.
@@ -41,3 +41,13 @@ El ZIP se prepara con Python y se comprueba con `ZipFile.testzip`. Excluye secre
 - En navegador se provocó una respuesta HTML 503 y se comprobó que el estado de conexión y su aviso se recuperan al volver JSON válido.
 - Se provocó un fallo HTML 502 al registrar una nota: no hubo reenvío automático, se conservó el borrador y una consulta exitosa no ocultó la falta de confirmación del guardado.
 - El aviso original de la captura no aporta código HTTP. No se confirmó la causa de la respuesta de producción: la red del entorno cloud bloquea el destino Pages. La nueva versión permite obtener ese código sin mostrar el contenido HTML ni el token.
+
+## Entrega 1.1.0 y revisión de los 15 apartados
+
+- 21 pruebas unitarias aprobadas: se añaden recordatorios, períodos de reporte, PDF real, tablas dinámicas nativas, proyecto Power BI y actualización aditiva de una base anterior.
+- 17 escenarios API D1 aprobados: 10 del CRM anterior y 7 de ficha ampliada, estados/origen de tarea, acuerdos convertibles sin duplicados, avisos/confirmaciones, datos Power BI, copia v2 y compatibilidad de copia v1.
+- Dos recorridos completos de navegador aprobados: el CRM anterior y el espacio ampliado. Se probaron dos PC/operadores independientes para envío, recepción y confirmación; tareas, filtros, calendario, recordatorios, PDF, Excel nativo y descarga PBIP.
+- Un lector independiente (openpyxl) reconoce las cinco hojas, cinco tablas estructuradas y tres tablas dinámicas con cachés y registros. No se confunde esta prueba con abrir Excel instalado.
+- Plantilla PBIP: verificados JSON, tablas TMDL, cinco páginas, relaciones, consultas y ZIP sin token. Su apertura real en Power BI Desktop de Windows queda pendiente.
+- WhatsApp permanece intacto, según la decisión expresa del usuario. No se inyectan nombres, filtros ni botones sobre sus mensajes.
+- Cero vulnerabilidades reportadas por npm audit tras instalar las dependencias de PDF/OOXML.

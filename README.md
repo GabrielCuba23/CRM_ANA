@@ -2,6 +2,10 @@
 
 Aplicación React + Tailwind para navegador y Chrome Side Panel, Pages Functions y D1. El mismo repositorio construye la web en `dist/` y una extensión Manifest V3 autocontenida en `extension-dist/`. No requiere el celular maestro para gestionar contactos. No es un producto oficial de ANA ni de Meta.
 
+## Versión 1.1.0: revisión del alcance
+
+Consulta [la revisión de los 15 apartados](docs/REVISION_15_FUNCIONES.md), basada en el Word entregado y las decisiones confirmadas. Incluye avisos entre operadores, ficha institucional ampliada, tablero global de tareas, calendario, acuerdos con responsables, recordatorios, reportes PDF/Excel con tablas dinámicas y proyecto Power BI .pbip. WhatsApp sigue siendo de solo lectura; las adaptaciones se hacen en el panel.
+
 ## Requisitos
 
 - Node.js 24 (versión verificada: 24.19.0), npm y Python 3 para empaquetar y generar el secreto local.
@@ -66,7 +70,7 @@ Los teléfonos se normalizan quitando espacios y signos, sin inventar prefijos i
 
 ## Actualizar la extensión
 
-La versión 1.0.1 mejora la recuperación de la sincronización. Además del ZIP completo, `npm run package` genera `artifacts/crm-ana-extension.zip`, que contiene directamente `manifest.json`, `index.html`, los scripts y `assets/`. Para una instalación nueva, descomprime ese ZIP y selecciona su carpeta en «Cargar descomprimida». Para actualizar una instalación conservando su configuración, cierra el panel, sustituye los archivos de su carpeta por los del ZIP nuevo y pulsa el botón de recarga de la extensión en el administrador de Chrome. La tarjeta debe mostrar versión 1.0.1. La web se actualiza mediante el despliegue de Pages; los archivos de una extensión descomprimida se actualizan en cada PC.
+La versión 1.1.0 incluye la recuperación de sincronización de 1.0.1 y las funciones descritas en la revisión de alcance. Además del ZIP completo, `npm run package` genera `artifacts/crm-ana-extension.zip`, que contiene directamente `manifest.json`, `index.html`, los scripts y `assets/`. Para una instalación nueva, descomprime ese ZIP y selecciona su carpeta en «Cargar descomprimida». Para actualizar una instalación conservando su configuración, cierra el panel, sustituye los archivos de su carpeta por los del ZIP nuevo y pulsa el botón de recarga de la extensión en el administrador de Chrome. La tarjeta debe mostrar versión 1.1.0. La web se actualiza mediante el despliegue de Pages; los archivos de una extensión descomprimida se actualizan en cada PC.
 
 Las consultas fallidas por red o errores temporales se reintentan una sola vez; no se superponen consultas de sincronización. Al recuperarse la lectura, se retira el aviso correspondiente. Los guardados no se reintentan automáticamente ni se consideran confirmados por una lectura posterior. Si el servidor devuelve HTML en vez de JSON, el aviso muestra el código HTTP y una indicación para comprobar la conexión o la configuración.
 
@@ -89,15 +93,29 @@ En una base ya existente, la API actualiza la lista una sola vez al recibir una 
 
 Los comandos `/drive`, `/tdr` y `/cut` se instalan como formatos iniciales editables. `/drive` abre el servicio general de Google Drive; sustituye su contenido por el enlace real de la carpeta del equipo cuando la tengas.
 
+## Avisos internos, agenda y tareas
+
+Desde el espacio de un contacto pulsa **Avisar a otro operador**. Elige al compañero y escribe qué necesita el contacto. El aviso se registra en D1 y en la bitácora. La campana muestra la bandeja; el destinatario puede marcar leído, abrir el contacto y confirmar **Recibido**. El remitente ve la confirmación en Enviados. La bandeja consulta cada cinco segundos mientras el CRM está abierto; los avisos permanecen guardados para el operador desconectado. Se muestran hasta 100 por bandeja, priorizando los no leídos; el respaldo conserva el historial completo. La identidad sigue basada en el selector compartido, sin cuentas individuales ni garantía criptográfica de autoría.
+
+En **Tareas** hay un tablero del equipo con Por hacer, En proceso, En revisión y Completado, filtrable por integrante. Pega el texto de WhatsApp en el formulario para convertirlo; para audios o documentos registra la transcripción o referencia. Se conserva el origen sin añadir botones o leer mensajes de WhatsApp.
+
+En **Agenda** hay calendario mensual y lista de reuniones. Desde cada contacto puedes agendar enlace o sala presencial, marcar Programada/Realizada/Cancelada y añadir acuerdos con responsable/fecha. **Crear tareas de acuerdos** es idempotente. Los acuerdos que ya tengan tareas se gestionan desde Tareas para evitar duplicados y vínculos ambiguos.
+
+La campana contiene recordatorios en pantalla de reuniones próximas (15 minutos), tareas próximas (una hora) y vencidas. Requieren CRM abierto y operador seleccionado. Una fecha de tarea sin hora vence a las 17:00 de Perú; si registras fecha/hora se respeta esa hora. Descartar un recordatorio se conserva en esta PC por operador. No se instalan servicios de fondo ni se envían mensajes externos.
+
 ## Centro de datos
 
-El Excel usa SheetJS 0.20.3 y genera exactamente `1_Resumen_KPIs`, `2_Agenda_Espacios`, `3_Tareas_y_CUTs`, `4_Bitacora_Historica` y `5_Reuniones_Acuerdos`. No ejecuta fórmulas con texto de notas: los textos se escriben como celdas de texto. Se carga de forma diferida para reducir el JavaScript inicial.
+El Excel usa SheetJS 0.20.3 y genera cinco tablas estructuradas y tres tablas dinámicas nativas con campos y cachés OOXML. La hoja de resumen incluye carga de tareas por operador/estado, coordinaciones por órgano/estado y reuniones por contacto/estado. Puedes reorganizarlas en Excel. El libro conserva exactamente `1_Resumen_KPIs`, `2_Agenda_Espacios`, `3_Tareas_y_CUTs`, `4_Bitacora_Historica` y `5_Reuniones_Acuerdos`. No ejecuta fórmulas con texto de notas: los textos se escriben como celdas de texto. Se carga de forma diferida para reducir el JavaScript inicial.
 
 La dependencia `xlsx` es un alias al espejo npm `@e965/xlsx@0.20.3`, que distribuye SheetJS CE bajo Apache-2.0. Se usa un espejo comunitario porque el CDN oficial no está permitido en la red de este entorno. La versión y la integridad están fijadas en `package-lock.json`; no se usa el paquete npm `xlsx@0.18.5`, con vulnerabilidades conocidas. Revisa esta decisión de cadena de suministro según la política de tu organización. `THIRD_PARTY_NOTICES.md` contiene la atribución.
 
+El Centro de datos permite elegir semana, mes, intervalo e integrante para Excel/PDF. Los pendientes anteriores al período se conservan para no perder trabajo abierto; el respaldo JSON siempre es completo.
+
+El proyecto Power BI descargable está en `powerbi/CRM_ANA.pbip` y `public/powerbi/CRM_ANA_PowerBI.pbip.zip`. Tiene cinco páginas, modelo TMDL, medidas DAX, relaciones y parámetros para API o Excel estructurado. Abre el .pbip en Power BI Desktop de Windows, configura los parámetros y puedes guardarlo como .pbix. Su estructura se verifica aquí; la apertura/ejecución en Power BI Desktop requiere validación en Windows. No se entrega un PBIX binario ni se afirma una validación de ese programa. El modelo de Importación se actualiza al refrescar, no por streaming.
+
 El conector Power BI muestra/copia la URL real de la instancia con el token codificado. La respuesta incluye `Resumen_KPIs`, `Agenda_Espacios`, `Tareas_y_CUTs`, `Bitacora_Historica` y `Reuniones_Acuerdos`. Al conectar elige cada lista y conviértela en tabla en Power Query. La URL es una credencial: puede quedar en el historial, el archivo PBIX y registros del proveedor. El endpoint no acepta token por URL para ningún otro recurso. Usa cabecera `X-Team-Token` en integraciones que la permitan.
 
-La copia JSON incluye las cinco tablas y los integrantes, un identificador de aplicación y versión de esquema. La restauración comprueba campos, enlaces, referencias, duplicados y tamaños **antes** de modificar datos, y ejecuta borrado e inserción en un único `DB.batch` atómico. Se descarga una copia de seguridad del estado anterior antes de restaurar desde la UI. Se excluye presencia porque es temporal. La copia no incluye cuenta Cloudflare, token, dominio, ni UUID: el nuevo administrador configura su propio Pages/D1 y restaura el JSON.
+La copia JSON v2 incluye contactos y datos institucionales, notas, tareas con estado y origen, reuniones con acuerdos, formatos, operadores, avisos internos y vínculos de acuerdos con tareas. Mantiene compatibilidad con copias v1. Incluye un identificador de aplicación y versión de esquema. La restauración comprueba campos, enlaces, referencias, duplicados y tamaños **antes** de modificar datos, y ejecuta borrado e inserción en un único `DB.batch` atómico. Se descarga una copia de seguridad del estado anterior antes de restaurar desde la UI. Se excluye presencia porque es temporal. La copia no incluye cuenta Cloudflare, token, dominio, ni UUID: el nuevo administrador configura su propio Pages/D1 y restaura el JSON.
 
 Límite de restauración UI: 1,4 MB de JSON; API: 1,5 MB, incluidos metadatos. Para conjuntos mayores usa respaldos/exportación nativa de D1 con su propia administración y Time Travel según el plan Cloudflare. Archiva y protege los JSON: contienen datos personales. El esquema se instala en una D1 nueva; no ejecutes la versión destructiva `DROP TABLE` original sobre datos existentes.
 
@@ -114,8 +132,9 @@ Todas las rutas requieren `X-Team-Token`. Solo `/api/powerbi` también acepta `?
 | `/api/backup` | GET | Copia completa versionada |
 | `/api/backup` | POST | `backup`, `operator_name` y `confirm` igual a `RESTAURAR` |
 | `/api/powerbi` | GET | Cinco conjuntos de datos normalizados |
+| `/api/notices` | GET | Bandejas y contador para el parámetro `operator` |
 
-Acciones: `UPSERT_SPACE`, `DELETE_SPACE`, `ADD_NOTE`, `UPSERT_TASK`, `DELETE_TASK`, `ADD_MEETING`, `DELETE_MEETING`, `UPSERT_TEMPLATE`, `DELETE_TEMPLATE`, `UPDATE_MEMBERS`. Las notas son cronológicas e inmutables desde la UI. Las consultas usan parámetros vinculados; no se interpolan campos del usuario en SQL.
+Acciones: `UPSERT_SPACE`, `DELETE_SPACE`, `ADD_NOTE`, `UPSERT_TASK`, `DELETE_TASK`, `ADD_MEETING`, `DELETE_MEETING`, `UPSERT_TEMPLATE`, `DELETE_TEMPLATE`, `UPDATE_MEMBERS`, `SEND_NOTICE`, `READ_NOTICE`, `ACK_NOTICE`, `CREATE_AGREEMENT_TASKS`. Las notas son cronológicas e inmutables desde la UI. Las consultas usan parámetros vinculados; no se interpolan campos del usuario en SQL.
 
 ## Verificación y empaquetado
 
@@ -124,6 +143,7 @@ npm test
 npm run build
 npm run test:integration
 npm run test:browser
+npm run test:workspace
 npm audit
 npm run package
 ```
@@ -147,10 +167,10 @@ Se utiliza el logo original de ANA entregado por el usuario, conservado sin modi
 - `shared/domain.js`: filtros, coincidencias seguras, firmas, minutas y tablas de reporte.
 - `server/api.js`, `server/validation.js`: autenticación, validación, SQL y restauración atómica.
 - `functions/api/[[path]].js`: entrada Pages Functions.
-- `migrations/0001_initial.sql`: esquema e índices no destructivos.
+- `migrations/`: esquema e índices no destructivos. La API crea las tablas adicionales 1.1.0 en una transacción idempotente al primer acceso autenticado; no requiere ejecutar SQL manual en una base anterior. No se alteran ni borran las tablas originales.
 - `extension/`: manifiesto, service worker y lector pasivo; se empaquetan sin código remoto.
 - `docs/CODIGO_REACT.md`: código íntegro de los componentes principales, para lectura.
 
 ## Límites operativos
 
-La validación local no sustituye la revisión en tu cuenta de Cloudflare y tu sesión real de WhatsApp. No se ha desplegado remotamente desde este entorno ni se ha publicado en GitHub. El token compartido, datos institucionales y política de tratamiento de información deben administrarse con las reglas de tu organización. Los latidos y consultas periódicas consumen operaciones D1: revisa cuotas y métricas de tu plan. El diseño descarga la agenda completa, por lo que está orientado a un equipo de coordinación; grandes volúmenes requieren paginación y búsqueda del lado del servidor.
+La validación local no sustituye la revisión en tu cuenta de Cloudflare y tu sesión real de WhatsApp. El repositorio se publica en GitHub y el usuario administra el despliegue Pages. Las pruebas de esta entrega se ejecutan localmente; no se confunden con validación de la cuenta de producción. El token compartido, datos institucionales y política de tratamiento de información deben administrarse con las reglas de tu organización. Los latidos y consultas periódicas consumen operaciones D1: revisa cuotas y métricas de tu plan. El diseño descarga la agenda completa, por lo que está orientado a un equipo de coordinación; grandes volúmenes requieren paginación y búsqueda del lado del servidor.

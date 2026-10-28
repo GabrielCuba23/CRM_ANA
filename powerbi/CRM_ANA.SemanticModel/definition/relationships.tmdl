@@ -1,0 +1,11 @@
+relationship e86e89c9-7c06-4d8d-b389-c14bd0aae66d
+	fromColumn: Tareas_y_CUTs.Espacio_ID
+	toColumn: Agenda_Espacios.ID_Espacio
+
+relationship f66aced9-aa50-429c-91a5-76399793fb6a
+	fromColumn: Bitacora_Historica.Espacio_ID
+	toColumn: Agenda_Espacios.ID_Espacio
+
+relationship 72188330-3f13-449a-bb31-2e3ffe993172
+	fromColumn: Reuniones_Acuerdos.Espacio_ID
+	toColumn: Agenda_Espacios.ID_Espacio

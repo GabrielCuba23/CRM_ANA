@@ -445,3 +445,41 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .extension-mode .compact-brand{display:flex;align-items:center;gap:16px}
 .extension-mode .compact-brand>.ana-logo{width:130px}
 .extension-mode .compact-brand>span{display:block;color:#526789;font-size:8px;line-height:1.8;letter-spacing:1px}
+
+/* Espacio de trabajo: tareas, agenda, avisos y reportes. */
+.contact-extras{display:flex;flex-direction:column;gap:6px;margin:14px 0;color:#526789;font-size:11px;overflow-wrap:anywhere}
+.detail-head>.btn{margin-top:8px;font-size:10px}
+.task-filters,.report-filters{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:18px 0}
+.task-filters .field,.report-filters .field{min-width:150px}
+.task-board{display:grid;grid-template-columns:repeat(4,minmax(245px,1fr));gap:14px;overflow-x:auto;padding-bottom:16px;margin-top:20px}
+.task-column{background:#eaf0fa;padding:12px;border:1px solid #dce4f2;border-radius:9px;min-height:300px}
+.task-column>header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 2px 16px}
+.task-column h2{font-size:13px;letter-spacing:0}.task-column>header>span{font-size:11px;color:#526789}
+.task-board-card{display:flex;flex-direction:column;align-items:stretch;gap:12px;background:#fff;border:1px solid #dce4f2;border-radius:8px;padding:15px;margin-bottom:12px}
+.task-board-card h3{font-size:13px;line-height:1.6;overflow-wrap:anywhere}.task-board-card p{font-size:11px;line-height:1.7;overflow-wrap:anywhere}
+.task-board-card details{font-size:10px;color:#526789}.task-board-card select{font-size:11px;padding:8px}
+.contact-link{padding:0;border:0;background:transparent;text-align:left;color:#2957a4;font-size:10px;line-height:1.7}
+.overdue{color:#b04235!important;font-weight:650}.source-editor summary{font-size:11px;color:#2957a4;margin-bottom:12px}
+.source-editor .field{margin:10px 0}.agreement-editor{display:flex;flex-direction:column;gap:12px}.agreement-row{display:flex;flex-direction:column;gap:10px;border-bottom:1px solid #dce4f2;padding:10px 0}
+.calendar-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px;text-transform:capitalize}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;background:white;border:1px solid #dce4f2;padding:12px;border-radius:9px}
+.calendar-weekday{text-align:center;font-size:11px;padding:10px 2px;color:#526789}
+.calendar-day{display:flex;flex-direction:column;gap:8px;align-items:flex-start;min-height:88px;border:1px solid #e5ebf5;border-radius:6px;background:#fff;padding:10px;text-align:left;color:#263b5c;font-size:12px}
+.calendar-day small{font-size:9px;color:#2957a4;line-height:1.4}.calendar-day.today{border-color:#7a9ed9}.calendar-day.active{background:#e7efff;border-color:#2957a4}
+.calendar-filter{display:flex;gap:15px;align-items:flex-end;margin:20px 0}.agenda-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.agenda-list article{display:flex;flex-direction:column;align-items:flex-start;gap:12px;background:white;border:1px solid #dce4f2;border-radius:8px;padding:20px}.agenda-list p{font-size:12px;line-height:1.8}
+.meeting-state{font-size:10px;color:#526789;padding:3px 6px;background:#edf3fc;border-radius:4px}
+.notice-bell{position:relative;overflow:visible}.unread-count{position:absolute;right:-3px;top:-5px;min-width:16px;line-height:16px;border-radius:12px;padding:0 3px;background:#ba4737;color:white;font-size:9px}
+.notification-dialog{font-size:13px}.inbox-tabs{display:flex;gap:5px;border-bottom:1px solid #dce4f2;padding-bottom:10px;margin-bottom:15px;overflow-x:auto}
+.inbox-tabs button{border:0;padding:8px;background:transparent;color:#526789;white-space:nowrap;font-size:11px}.inbox-tabs button.active{background:#e9f0fc;color:#2957a4;border-radius:5px}
+.inbox-item{display:flex;flex-direction:column;gap:10px;padding:18px 12px;border-bottom:1px solid #dce4f2}.inbox-item.unread{background:#f1f5fe;border-left:3px solid #2957a4}
+.inbox-item>header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.inbox-item p{font-size:12px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}.inbox-item strong{font-size:12px}.inbox-item .btn{font-size:10px}
+.notice-popup{position:fixed;bottom:90px;right:15px;z-index:25;width:min(340px,calc(100vw - 30px));padding:18px;background:#fff;border:1px solid #b7c9e8;border-radius:10px;box-shadow:0 8px 35px #17345e25;font-size:12px}
+.notice-popup p{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0;max-height:130px;overflow:auto;line-height:1.7}
+.reminder-banner{position:fixed;bottom:12px;right:15px;z-index:24;width:min(400px,calc(100vw - 30px));background:#fff4d4;border:1px solid #ebd28c;border-radius:8px;padding:12px;font-size:11px;display:flex;align-items:center;gap:8px}
+.report-filters+.data-cards,.data-center>.data-cards{margin-top:20px}
+@media(max-width:900px){.mobile-nav{overflow-x:auto;justify-content:flex-start!important;scrollbar-width:thin}.mobile-nav button{flex:0 0 auto!important;white-space:nowrap}}
+@media(max-width:600px){.operator label{max-width:95px}.operator select{width:95px}.task-board{grid-template-columns:repeat(4,245px)}.task-filters,.report-filters{gap:10px}.task-filters .field,.report-filters .field{min-width:125px}.calendar-grid{padding:7px;gap:3px}.calendar-weekday{font-size:9px}.calendar-day{padding:6px;min-height:65px;font-size:11px}.calendar-day small{font-size:7px}.calendar-controls{font-size:12px}.calendar-controls .btn{font-size:9px;padding:7px}.calendar-filter{flex-wrap:wrap}.agenda-list{grid-template-columns:1fr}.reminder-banner{font-size:10px}.source-editor summary{line-height:1.8}}
+.extension-mode .mobile-nav{overflow-x:auto;justify-content:flex-start;scrollbar-width:thin}.extension-mode .mobile-nav button{flex:0 0 auto;white-space:nowrap}
+
+.directory-filters{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 16px;max-width:650px}.directory-filters .field{min-width:140px}.has-selection .directory-filters{display:none}@media(max-width:600px){.directory-filters .field{min-width:130px}}

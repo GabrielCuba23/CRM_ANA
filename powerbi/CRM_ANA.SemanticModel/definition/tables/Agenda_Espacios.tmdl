@@ -1,0 +1,112 @@
+table Agenda_Espacios
+	lineageTag: 8eedb1e6-336b-4acd-9359-ed8cc0fe5495
+
+	measure Coordinaciones = COUNTROWS(Agenda_Espacios)
+		formatString: #,0
+		lineageTag: 72888a00-40e6-49be-9c16-2dff2bf2eb45
+
+	measure Coordinaciones_activas = CALCULATE(COUNTROWS(Agenda_Espacios), Agenda_Espacios[Estado_Gestion] <> "Cerrado")
+		formatString: #,0
+		lineageTag: b06e1760-2ae3-47db-8541-381febf1616e
+
+	measure Urgentes = CALCULATE(COUNTROWS(Agenda_Espacios), Agenda_Espacios[Estado_Gestion] = "Urgente")
+		formatString: #,0
+		lineageTag: 9768386f-1dcf-4d1d-91da-385bba44c0ae
+
+	column ID_Espacio
+		dataType: string
+		lineageTag: db24f2ff-225a-4f14-9f06-818748202afc
+		sourceColumn: ID_Espacio
+		summarizeBy: none
+
+	column Nombre_Contacto_o_Grupo
+		dataType: string
+		lineageTag: b4ca89ce-d907-4bef-aaa4-ee607ecbdc80
+		sourceColumn: Nombre_Contacto_o_Grupo
+		summarizeBy: none
+
+	column Cargo
+		dataType: string
+		lineageTag: 2b390cc0-099d-435b-8ae5-58a285fca5e2
+		sourceColumn: Cargo
+		summarizeBy: none
+
+	column Organo_Unidad
+		dataType: string
+		lineageTag: b4abf351-724e-466a-9223-50a74f69b07c
+		sourceColumn: Organo_Unidad
+		summarizeBy: none
+
+	column Oficina
+		dataType: string
+		lineageTag: 312b9fe8-8fb1-44c5-9f23-4b0860ce95f0
+		sourceColumn: Oficina
+		summarizeBy: none
+
+	column Entidad
+		dataType: string
+		lineageTag: 302bd351-9383-4449-b654-36573fedad56
+		sourceColumn: Entidad
+		summarizeBy: none
+
+	column Correo
+		dataType: string
+		lineageTag: 4c31a844-86b8-4980-8916-5da0f668e7e3
+		sourceColumn: Correo
+		summarizeBy: none
+
+	column Anexo
+		dataType: string
+		lineageTag: a1346ebb-2fa1-4971-8aed-45bf3df655c5
+		sourceColumn: Anexo
+		summarizeBy: none
+
+	column Ubicacion
+		dataType: string
+		lineageTag: bee3062a-b34f-4652-b942-afe62ccf5847
+		sourceColumn: Ubicacion
+		summarizeBy: none
+
+	column Telefono_WhatsApp
+		dataType: string
+		lineageTag: 9169617a-5190-4628-b606-d15d14b4bc9f
+		sourceColumn: Telefono_WhatsApp
+		summarizeBy: none
+
+	column Codigo_CUT
+		dataType: string
+		lineageTag: c09b2838-b544-4bec-a57b-30a876b486e7
+		sourceColumn: Codigo_CUT
+		summarizeBy: none
+
+	column Documento_Referencia
+		dataType: string
+		lineageTag: 1914e144-0132-4bc3-aeb5-56bdde12e4cb
+		sourceColumn: Documento_Referencia
+		summarizeBy: none
+
+	column Estado_Gestion
+		dataType: string
+		lineageTag: 44821898-dfda-4c69-b4d5-042f098f2b56
+		sourceColumn: Estado_Gestion
+		summarizeBy: none
+
+	column Responsables_Equipo
+		dataType: string
+		lineageTag: 683a3d54-ac81-461f-b0b8-6391de12229a
+		sourceColumn: Responsables_Equipo
+		summarizeBy: none
+
+	column Ultima_Actualizacion
+		dataType: dateTime
+		lineageTag: 82b82734-fe29-40bb-adf5-2e29e481cf14
+		sourceColumn: Ultima_Actualizacion
+		summarizeBy: none
+		formatString: yyyy-MM-dd HH:mm
+
+	partition Agenda_Espacios = m
+		mode: import
+		source =
+			CargarTabla("Agenda_Espacios", {"ID_Espacio", "Nombre_Contacto_o_Grupo", "Cargo", "Organo_Unidad", "Oficina", "Entidad", "Correo", "Anexo", "Ubicacion", "Telefono_WhatsApp", "Codigo_CUT", "Documento_Referencia", "Estado_Gestion", "Responsables_Equipo", "Ultima_Actualizacion"}, {}, {}, {"Ultima_Actualizacion"})
+
+	annotation PBI_ResultType = Table

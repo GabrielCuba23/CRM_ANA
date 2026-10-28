@@ -1,6 +1,6 @@
 {
   "name": "crm-whatsapp-ana",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,20 +14,25 @@
     "test:integration": "node tests/integration.mjs",
     "test:browser": "node tests/browser.mjs",
     "package": "python3 scripts/package.py",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name crm-whatsapp-ana"
+    "deploy": "npm run build && wrangler pages deploy dist --project-name crm-whatsapp-ana",
+    "test:workspace": "node tests/workspace.integration.mjs && node tests/workspace.browser.mjs",
+    "powerbi:generate": "python3 scripts/create-powerbi.py"
   },
   "dependencies": {
+    "fflate": "0.8.3",
+    "jspdf": "4.2.1",
+    "jspdf-autotable": "5.0.9",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "xlsx": "npm:@e965/xlsx@0.20.3"
   },
   "devDependencies": {
-    "vite": "7.3.7",
     "@vitejs/plugin-react": "5.1.1",
-    "tailwindcss": "3.4.19",
-    "postcss": "8.5.32",
     "autoprefixer": "10.4.22",
-    "wrangler": "4.154.0",
-    "playwright": "1.64.1"
+    "playwright": "1.64.1",
+    "postcss": "8.5.32",
+    "tailwindcss": "3.4.19",
+    "vite": "7.3.7",
+    "wrangler": "4.154.0"
   }
 }

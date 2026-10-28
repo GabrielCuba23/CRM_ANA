@@ -1,0 +1,86 @@
+table Reuniones_Acuerdos
+	lineageTag: 16db7d01-9f95-47e0-b205-db68433aa84e
+
+	measure Cantidad_reuniones = COUNTROWS(Reuniones_Acuerdos)
+		formatString: #,0
+		lineageTag: b7db26a4-51d8-4a36-9509-a4c4391beb28
+
+	column ID_Reunion
+		dataType: string
+		lineageTag: 11007a6b-e7a1-4bd9-a4c6-eff530648989
+		sourceColumn: ID_Reunion
+		summarizeBy: none
+
+	column Espacio_ID
+		dataType: string
+		lineageTag: b136fb02-360b-4b7d-8638-5e400ab10d64
+		sourceColumn: Espacio_ID
+		summarizeBy: none
+
+	column Fecha_Hora_Reunion
+		dataType: dateTime
+		lineageTag: 1f234b3b-880e-47c4-b1c8-89a727e6533a
+		sourceColumn: Fecha_Hora_Reunion
+		summarizeBy: none
+		formatString: yyyy-MM-dd HH:mm
+
+	column Titulo_Reunion
+		dataType: string
+		lineageTag: 0654eedf-7a36-4cce-8c16-6a0deb26d11a
+		sourceColumn: Titulo_Reunion
+		summarizeBy: none
+
+	column Contacto_Espacio
+		dataType: string
+		lineageTag: 834cfdf4-d3f0-4b76-a7e4-a8564630d59d
+		sourceColumn: Contacto_Espacio
+		summarizeBy: none
+
+	column Codigo_CUT
+		dataType: string
+		lineageTag: baebf6f4-ce70-46a6-bf42-e247425a9f73
+		sourceColumn: Codigo_CUT
+		summarizeBy: none
+
+	column Participantes
+		dataType: string
+		lineageTag: ead734d0-b5ee-442d-9fff-c0a1cf1155fd
+		sourceColumn: Participantes
+		summarizeBy: none
+
+	column Enlace_Sala
+		dataType: string
+		lineageTag: 5f5da999-4218-448d-a8fd-ecd789656c8f
+		sourceColumn: Enlace_Sala
+		summarizeBy: none
+
+	column Sala_Presencial
+		dataType: string
+		lineageTag: c869fa22-5fa4-4c83-aae7-809bd2c3f173
+		sourceColumn: Sala_Presencial
+		summarizeBy: none
+
+	column Estado_Reunion
+		dataType: string
+		lineageTag: efde5581-91c1-4a0b-b5f1-2253650d3672
+		sourceColumn: Estado_Reunion
+		summarizeBy: none
+
+	column Acuerdos_Pactados
+		dataType: string
+		lineageTag: a5ac528d-d49d-4aba-bf47-2313d33a921a
+		sourceColumn: Acuerdos_Pactados
+		summarizeBy: none
+
+	column Autor
+		dataType: string
+		lineageTag: 59be7512-1197-4937-b8bb-f0cdd6bd80d2
+		sourceColumn: Autor
+		summarizeBy: none
+
+	partition Reuniones_Acuerdos = m
+		mode: import
+		source =
+			CargarTabla("Reuniones_Acuerdos", {"ID_Reunion", "Espacio_ID", "Fecha_Hora_Reunion", "Titulo_Reunion", "Contacto_Espacio", "Codigo_CUT", "Participantes", "Enlace_Sala", "Sala_Presencial", "Estado_Reunion", "Acuerdos_Pactados", "Autor"}, {}, {}, {"Fecha_Hora_Reunion"})
+
+	annotation PBI_ResultType = Table

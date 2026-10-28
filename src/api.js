@@ -13,7 +13,7 @@ export class ApiError extends Error {
 const TRANSIENT_STATUS=new Set([408,429,500,502,503,504,520,521,522,523,524,525,526]);
 function resourceName(path){
  const route=path.split('?')[0];
- return {sync:'la agenda',presence:'la presencia del equipo',backup:'la copia de seguridad',powerbi:'el reporte'}[route]||'los datos';
+ return {notices:'los avisos internos',sync:'la agenda',presence:'la presencia del equipo',backup:'la copia de seguridad',powerbi:'el reporte'}[route]||'los datos';
 }
 function retryDelay(response){
  const raw=response.headers.get('Retry-After');if(!raw)return 1000;

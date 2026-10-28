@@ -1,0 +1,15 @@
+import React,{useState} from 'react';
+import {TASK_STAGES,folded} from '../../shared/domain.js';
+import {Button,Field,Icon,Modal,Empty} from './UI.jsx';
+import TaskEditor from './TaskEditor.jsx';
+export default function TaskBoard({data,operator,busy,act,onOpenSpace}){
+ const [assignee,setAssignee]=useState(''),[query,setQuery]=useState(''),[editing,setEditing]=useState(null);
+ const map=Object.fromEntries(data.spaces.map(s=>[s.id,s]));
+ const tasks=data.tasks.filter(t=>(!assignee||t.assignee===assignee)&&folded([t.title,t.source_text,map[t.space_id]?.name,map[t.space_id]?.cut_code].join(' ')).includes(folded(query)));
+ return <section className="main-content"><header className="page-heading"><div><p className="eyebrow">PENDIENTES Y ENTREGABLES DEL EQUIPO</p><h1>Tablero de tareas</h1><p>Cuatro estados, responsables y vencimientos compartidos.</p></div><Button disabled={!operator||!data.spaces.length} onClick={()=>setEditing({})}><Icon name="plus"/>Nueva tarea</Button></header>
+ <div className="task-filters"><Field label="Filtrar por responsable"><select value={assignee} onChange={e=>setAssignee(e.target.value)}><option value="">Todo el equipo</option>{data.members.map(m=><option key={m}>{m}</option>)}</select></Field><Field label="Buscar tareas"><input value={query} onChange={e=>setQuery(e.target.value)}/></Field><Button kind="secondary" onClick={()=>setAssignee(operator)} disabled={!operator}>Mis tareas</Button></div>
+ <div className="task-board">{TASK_STAGES.map(stage=><section className="task-column" key={stage}><header><h2>{stage}</h2><span>{tasks.filter(t=>t.stage===stage).length}</span></header>{tasks.filter(t=>t.stage===stage).map(t=><article key={t.id} className="task-board-card"><button className="contact-link" onClick={()=>onOpenSpace(t.space_id)}>{map[t.space_id]?.name} · {map[t.space_id]?.cut_code||'Sin CUT'}</button><h3>{t.title}</h3><p>{t.assignee}</p><small className={!t.done&&t.due_date&&t.due_date<new Date().toLocaleDateString('en-CA',{timeZone:'America/Lima'})?'overdue':''}>{t.due_date||'Sin fecha límite'}</small>{t.source_text&&<details><summary>Origen: {t.source_type}</summary><p className="pre-line">{t.source_text}</p></details>}<Field label={`Estado de tarea ${t.title}`}><select value={t.stage} disabled={busy||!operator} onChange={e=>act('UPSERT_TASK',{...t,stage:e.target.value,done:e.target.value==='Completado'})}>{TASK_STAGES.map(s=><option key={s}>{s}</option>)}</select></Field><Button kind="quiet" disabled={!operator} onClick={()=>setEditing(t)}>Editar tarea</Button></article>)}</section>)}</div>
+ {!data.spaces.length&&<Empty title="Primero crea un espacio de contacto">Las tareas quedan vinculadas al contacto y su CUT.</Empty>}
+ {editing&&<Modal title={editing.id?'Editar tarea':'Crear tarea desde mensaje o texto'} onClose={()=>setEditing(null)}><TaskEditor data={data} operator={operator} initial={editing.id?editing:null} busy={busy} onSave={async p=>{const ok=await act('UPSERT_TASK',p);if(ok)setEditing(null);return ok;}}/></Modal>}
+ </section>;
+}

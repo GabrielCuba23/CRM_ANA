@@ -1,0 +1,55 @@
+table Resumen_KPIs
+	lineageTag: b9bd8dcf-e097-4bdb-bb55-90256b67afcf
+
+	measure Carga_pendiente = SUM(Resumen_KPIs[Tareas_Pendientes])
+		formatString: #,0
+		lineageTag: f1c7dd1a-f7b6-44aa-b9f9-865d953052b8
+
+	column Integrante_Equipo
+		dataType: string
+		lineageTag: 91a2ca90-21b3-4939-8d48-bd880f8189eb
+		sourceColumn: Integrante_Equipo
+		summarizeBy: none
+
+	column Espacios_Asignados
+		dataType: int64
+		lineageTag: 2742ca51-eb76-47e3-bbb2-dbfab2b44f91
+		sourceColumn: Espacios_Asignados
+		summarizeBy: sum
+
+	column Coordinaciones_Urgentes
+		dataType: int64
+		lineageTag: 2378f0d8-86b6-4b67-b3c6-dddb74f0939a
+		sourceColumn: Coordinaciones_Urgentes
+		summarizeBy: sum
+
+	column Para_Visto_Bueno
+		dataType: int64
+		lineageTag: 5bd53747-9dcb-45cf-b438-818586b376c5
+		sourceColumn: Para_Visto_Bueno
+		summarizeBy: sum
+
+	column Tareas_Pendientes
+		dataType: int64
+		lineageTag: e3bf336c-9d4a-4c32-8045-94569a684078
+		sourceColumn: Tareas_Pendientes
+		summarizeBy: sum
+
+	column Tareas_Completadas
+		dataType: int64
+		lineageTag: 7c046b61-b8d0-4fc0-8460-d1ef901fbe4e
+		sourceColumn: Tareas_Completadas
+		summarizeBy: sum
+
+	column Porcentaje_Avance
+		dataType: int64
+		lineageTag: e3b10154-8116-45b0-a258-7f5607d99815
+		sourceColumn: Porcentaje_Avance
+		summarizeBy: sum
+
+	partition Resumen_KPIs = m
+		mode: import
+		source =
+			CargarTabla("Resumen_KPIs", {"Integrante_Equipo", "Espacios_Asignados", "Coordinaciones_Urgentes", "Para_Visto_Bueno", "Tareas_Pendientes", "Tareas_Completadas", "Porcentaje_Avance"}, {"Espacios_Asignados", "Coordinaciones_Urgentes", "Para_Visto_Bueno", "Tareas_Pendientes", "Tareas_Completadas", "Porcentaje_Avance"}, {}, {})
+
+	annotation PBI_ResultType = Table

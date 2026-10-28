@@ -1,14 +1,6 @@
-import * as XLSX from 'xlsx';
-import {reportTables} from '../../shared/domain.js';
-export function createMasterWorkbook(data){
- const workbook=XLSX.utils.book_new();
- for(const [name,rows] of Object.entries(reportTables(data))){
-  const sheet=XLSX.utils.json_to_sheet(rows);
-  if(!rows.length)XLSX.utils.sheet_add_aoa(sheet,[['Sin registros']],{origin:'A1'});
-  sheet['!cols']=Object.keys(rows[0]||{Estado:0}).map(key=>({wch:Math.min(55,Math.max(18,key.length+3))}));
-  if(sheet['!ref'])sheet['!autofilter']={ref:sheet['!ref']};
-  XLSX.utils.book_append_sheet(workbook,sheet,name);
- }
- return workbook;
+import {createMasterWorkbook,createMasterExcelBytes} from './nativeExcel.js';
+export {createMasterWorkbook,createMasterExcelBytes};
+export function downloadMasterExcel(data){
+ const bytes=createMasterExcelBytes(data),url=URL.createObjectURL(new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+ const a=document.createElement('a');a.href=url;a.download=`Reporte_Maestro_CRM_ANA_${new Date().toISOString().slice(0,10)}.xlsx`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-export function downloadMasterExcel(data){XLSX.writeFile(createMasterWorkbook(data),`Reporte_Maestro_CRM_ANA_${new Date().toISOString().slice(0,10)}.xlsx`);}

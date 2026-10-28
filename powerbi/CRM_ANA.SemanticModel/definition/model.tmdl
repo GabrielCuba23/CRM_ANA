@@ -1,0 +1,15 @@
+model Model
+	culture: es-PE
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-PE
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table Resumen_KPIs
+ref table Agenda_Espacios
+ref table Tareas_y_CUTs
+ref table Bitacora_Historica
+ref table Reuniones_Acuerdos

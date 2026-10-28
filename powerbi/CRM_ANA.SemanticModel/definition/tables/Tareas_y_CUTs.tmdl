@@ -1,0 +1,109 @@
+table Tareas_y_CUTs
+	lineageTag: 08fdff48-46d4-4768-9c72-644b2e6388ab
+
+	measure Total_tareas = COUNTROWS(Tareas_y_CUTs)
+		formatString: #,0
+		lineageTag: f47ec72a-bed0-4d48-9dab-92a71d4bf7e9
+
+	measure Tareas_pendientes = CALCULATE(COUNTROWS(Tareas_y_CUTs), Tareas_y_CUTs[Estado] <> "Completado")
+		formatString: #,0
+		lineageTag: 88bd8192-ac23-4131-8ae0-fb9bb1764f13
+
+	measure Tareas_completadas = CALCULATE(COUNTROWS(Tareas_y_CUTs), Tareas_y_CUTs[Estado] = "Completado")
+		formatString: #,0
+		lineageTag: 7c16295e-60ba-4b3b-9031-543106930ec5
+
+	measure Avance = DIVIDE([Tareas_completadas], [Total_tareas], 0)
+		formatString: 0.0%
+		lineageTag: 2f5c0af3-49a0-4e29-86bf-e7e7655dfde0
+
+	measure Tareas_vencidas = COUNTROWS(FILTER(Tareas_y_CUTs, Tareas_y_CUTs[Estado] <> "Completado" && NOT ISBLANK(Tareas_y_CUTs[Fecha_Limite]) && IF(ISBLANK(Tareas_y_CUTs[Fecha_Hora_Limite]), Tareas_y_CUTs[Fecha_Limite] + TIME(17,0,0), Tareas_y_CUTs[Fecha_Hora_Limite]) < UTCNOW() - TIME(5,0,0)))
+		formatString: #,0
+		lineageTag: c59fee52-574b-47e7-b7b0-a9d81f94f5fa
+
+	column ID_Tarea
+		dataType: string
+		lineageTag: bde81a81-eb4a-4421-822a-09a3f69bc903
+		sourceColumn: ID_Tarea
+		summarizeBy: none
+
+	column Espacio_ID
+		dataType: string
+		lineageTag: 88ac58ef-f8b7-4b66-a980-32be718a7537
+		sourceColumn: Espacio_ID
+		summarizeBy: none
+
+	column Codigo_CUT
+		dataType: string
+		lineageTag: 1ca3cd96-30b6-4517-8dc0-6b1a2ce14834
+		sourceColumn: Codigo_CUT
+		summarizeBy: none
+
+	column Contacto_Espacio
+		dataType: string
+		lineageTag: 8f7f9076-5f69-47b9-8049-12b458e33004
+		sourceColumn: Contacto_Espacio
+		summarizeBy: none
+
+	column Organo
+		dataType: string
+		lineageTag: a40244c4-f12c-4bda-bf14-fc13e7154ff1
+		sourceColumn: Organo
+		summarizeBy: none
+
+	column Descripcion_Tarea
+		dataType: string
+		lineageTag: b188963d-7e15-4b3c-b5e7-1c06b6dec0e7
+		sourceColumn: Descripcion_Tarea
+		summarizeBy: none
+
+	column Responsable
+		dataType: string
+		lineageTag: 850685c0-f9bf-48c7-9fa6-9c3da98cc7f1
+		sourceColumn: Responsable
+		summarizeBy: none
+
+	column Autor
+		dataType: string
+		lineageTag: 8f933b80-8430-4b47-83a0-a5c423628458
+		sourceColumn: Autor
+		summarizeBy: none
+
+	column Fecha_Limite
+		dataType: dateTime
+		lineageTag: 9fc284d5-a7a4-43a0-8c96-b1b2ac05195c
+		sourceColumn: Fecha_Limite
+		summarizeBy: none
+		formatString: yyyy-MM-dd
+
+	column Fecha_Hora_Limite
+		dataType: dateTime
+		lineageTag: c7d90bca-3802-414f-9b44-9054bd684ca9
+		sourceColumn: Fecha_Hora_Limite
+		summarizeBy: none
+		formatString: yyyy-MM-dd HH:mm
+
+	column Estado
+		dataType: string
+		lineageTag: 0f0d7db6-db17-4cd3-8962-ded2c7400eb1
+		sourceColumn: Estado
+		summarizeBy: none
+
+	column Texto_Origen
+		dataType: string
+		lineageTag: e62f209f-1d2e-49d9-9f5f-6402986c043c
+		sourceColumn: Texto_Origen
+		summarizeBy: none
+
+	column Tipo_Origen
+		dataType: string
+		lineageTag: 784e6c69-3650-4cea-b3db-2ab1a28b77aa
+		sourceColumn: Tipo_Origen
+		summarizeBy: none
+
+	partition Tareas_y_CUTs = m
+		mode: import
+		source =
+			CargarTabla("Tareas_y_CUTs", {"ID_Tarea", "Espacio_ID", "Codigo_CUT", "Contacto_Espacio", "Organo", "Descripcion_Tarea", "Responsable", "Autor", "Fecha_Limite", "Fecha_Hora_Limite", "Estado", "Texto_Origen", "Tipo_Origen"}, {}, {"Fecha_Limite"}, {"Fecha_Hora_Limite"})
+
+	annotation PBI_ResultType = Table

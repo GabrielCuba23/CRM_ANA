@@ -9,3 +9,6 @@ extension-dist/
 artifacts/
 playwright-report/
 wrangler.local.toml
+
+.pbi/
+*.pbix

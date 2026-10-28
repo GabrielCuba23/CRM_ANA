@@ -74,7 +74,7 @@ try{
  await page.unroute('**/api/sync',noteOutage);
  await page.getByRole('button',{name:'Cerrar aviso',exact:true}).click();
  await page.getByRole('button',{name:'Registrar nota'}).click();await page.locator('.timeline').getByText('Validar aforo y preparar el informe para la dirección.').waitFor();
- await page.getByRole('button',{name:'Tareas',exact:true}).click();
+ await page.locator('.detail-tabs').getByRole('button',{name:'Tareas',exact:true}).click();
  await page.getByLabel('Nueva tarea').fill('Revisar expediente técnico');
  await page.getByLabel('Responsable',{exact:true}).selectOption('Fernando');
  await page.getByLabel('Fecha límite').fill('2026-11-01');

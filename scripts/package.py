@@ -1,15 +1,23 @@
 from pathlib import Path
 import hashlib
+import re
 import zipfile
 
 root = Path(__file__).resolve().parents[1]
 output = root / 'artifacts' / 'crm-whatsapp-ana-completo.zip'
 output.parent.mkdir(exist_ok=True)
-required = ['dist/index.html', 'extension-dist/manifest.json', 'package-lock.json', 'README.md']
+required = ['dist/index.html', 'extension-dist/manifest.json', 'package-lock.json', 'README.md', 'public/powerbi/CRM_ANA_PowerBI.pbip.zip', 'public/docs/revision-15-funciones.html']
 for name in required:
     if not (root / name).is_file():
         raise SystemExit('Falta ' + name + '. Ejecuta npm ci y npm run build antes de empaquetar.')
-excluded = {'.git', 'node_modules', '.wrangler', 'artifacts', '__pycache__', '.npm-cache'}
+template = root / 'powerbi' / 'CRM_ANA.SemanticModel' / 'definition' / 'expressions.tmdl'
+if not re.search(r'^expression pTeamToken = "" meta', template.read_text(), re.M):
+    raise SystemExit('El proyecto Power BI tiene parámetros privados modificados. Restaura la plantilla sin token antes de empaquetar.')
+with zipfile.ZipFile(root / 'public/powerbi/CRM_ANA_PowerBI.pbip.zip') as project:
+    expressions = project.read('CRM_ANA_PowerBI/CRM_ANA.SemanticModel/definition/expressions.tmdl').decode()
+    if not re.search(r'^expression pTeamToken = "" meta', expressions, re.M):
+        raise SystemExit('El ZIP Power BI debe contener la plantilla sin token.')
+excluded = {'.git', 'node_modules', '.wrangler', 'artifacts', '__pycache__', '.npm-cache', '.pbi'}
 with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
     for path in sorted(root.rglob('*')):
         relative = path.relative_to(root)
@@ -17,7 +25,7 @@ with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED, compressleve
             continue
         if not path.is_file() or path.is_symlink():
             continue
-        if path.name in {'.dev.vars', 'wrangler.local.toml'} or path.name.startswith('.env') or path.suffix in {'.log', '.sqlite', '.db'}:
+        if path.name in {'.dev.vars', 'wrangler.local.toml'} or path.name.startswith('.env') or path.suffix.lower() in {'.log', '.sqlite', '.db', '.pbix'}:
             continue
         archive.write(path, 'crm-whatsapp-ana/' + relative.as_posix())
 with zipfile.ZipFile(output) as archive:
