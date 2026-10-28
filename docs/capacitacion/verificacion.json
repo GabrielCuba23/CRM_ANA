@@ -1,0 +1,24 @@
+{
+  "slides": 33,
+  "all_slides_reachable": true,
+  "clickable_shapes": 397,
+  "unique_external_urls": 4,
+  "quiz_branches_verified": true,
+  "original_logo_embedded": true,
+  "shape_bounds": "OK",
+  "xml_and_zip": "OK",
+  "speaker_notes": 33,
+  "pdf_pages": 33,
+  "macros": false,
+  "files": {
+    "CRM_ANA_Guia_Interactiva.pptx": {
+      "bytes": 713451,
+      "sha256": "c2b3f92f8d41781f35b29809dfa75c75841c864e9f89fa502e94b7d41da60321"
+    },
+    "CRM_ANA_Guia_Interactiva.pdf": {
+      "bytes": 1361266,
+      "sha256": "91534211fc47cc9906dfe111c63af005b9abf77643dca1ffa440702f38d07c44"
+    }
+  },
+  "native_powerpoint_validation": "No ejecutada en este entorno; render verificado mediante LibreOffice."
+}

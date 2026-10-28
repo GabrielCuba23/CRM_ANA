@@ -1,0 +1,246 @@
+{
+  "title": "CRM ANA · Guía interactiva de instalación y uso",
+  "file": "CRM_ANA_Guia_Interactiva.pptx",
+  "slides": 33,
+  "web_version": "1.3.0",
+  "extension_version": "1.2.1",
+  "date_peru": "2026-10-28",
+  "slides_index": [
+    {
+      "number": 1,
+      "key": "portada",
+      "title": "CRM & Agenda Cloud",
+      "section": "INICIO",
+      "dark": true
+    },
+    {
+      "number": 2,
+      "key": "menu",
+      "title": "Elige tu recorrido",
+      "section": "NAVEGACIÓN INTERACTIVA",
+      "dark": false
+    },
+    {
+      "number": 3,
+      "key": "funciones",
+      "title": "Las 15 funciones acordadas",
+      "section": "MAPA DE FUNCIONES",
+      "dark": false
+    },
+    {
+      "number": 4,
+      "key": "modos",
+      "title": "Una misma agenda, dos formas de entrar",
+      "section": "INSTALAR EN CADA PC",
+      "dark": false
+    },
+    {
+      "number": 5,
+      "key": "requisitos",
+      "title": "Antes de instalar: tres cosas listas",
+      "section": "INSTALAR EN CADA PC",
+      "dark": false
+    },
+    {
+      "number": 6,
+      "key": "descarga",
+      "title": "1. Descarga y descomprime el paquete correcto",
+      "section": "INSTALAR EN CADA PC",
+      "dark": false
+    },
+    {
+      "number": 7,
+      "key": "chrome",
+      "title": "2. Carga la carpeta en Chrome",
+      "section": "INSTALAR EN CADA PC",
+      "dark": false
+    },
+    {
+      "number": 8,
+      "key": "abrir",
+      "title": "3. Abre el panel e ingresa al CRM",
+      "section": "INSTALAR EN CADA PC",
+      "dark": false
+    },
+    {
+      "number": 9,
+      "key": "operador",
+      "title": "4. Elige quién opera esta PC",
+      "section": "PRIMER ACCESO",
+      "dark": false
+    },
+    {
+      "number": 10,
+      "key": "directorio",
+      "title": "Encuentra la coordinación en segundos",
+      "section": "USO DIARIO",
+      "dark": false
+    },
+    {
+      "number": 11,
+      "key": "chat",
+      "title": "Abre un chat: el CRM muestra su contexto",
+      "section": "USO CON WHATSAPP WEB",
+      "dark": false
+    },
+    {
+      "number": 12,
+      "key": "ficha",
+      "title": "Crea una ficha útil para todo el equipo",
+      "section": "ESPACIOS DE CONTACTO",
+      "dark": false
+    },
+    {
+      "number": 13,
+      "key": "bitacora",
+      "title": "Bitácora: deja la coordinación por escrito",
+      "section": "HERRAMIENTAS DEL CONTACTO",
+      "dark": false
+    },
+    {
+      "number": 14,
+      "key": "tareas",
+      "title": "Una sección de Tareas, dos vistas",
+      "section": "USO DIARIO",
+      "dark": false
+    },
+    {
+      "number": 15,
+      "key": "agenda",
+      "title": "Agenda compartida: crea un evento nuevo",
+      "section": "USO DIARIO",
+      "dark": false
+    },
+    {
+      "number": 16,
+      "key": "calendarios",
+      "title": "Llévalo a Google, Apple u Outlook",
+      "section": "AGENDA Y CALENDARIOS",
+      "dark": false
+    },
+    {
+      "number": 17,
+      "key": "reuniones",
+      "title": "De la reunión al acuerdo y a la tarea",
+      "section": "HERRAMIENTAS DEL CONTACTO",
+      "dark": false
+    },
+    {
+      "number": 18,
+      "key": "formatos",
+      "title": "Formatos /: responde con orden y firma",
+      "section": "HERRAMIENTAS DEL CONTACTO",
+      "dark": false
+    },
+    {
+      "number": 19,
+      "key": "avisos",
+      "title": "“Jaruska, este contacto quiere hablar contigo”",
+      "section": "AVISOS ENTRE OPERADORES",
+      "dark": false
+    },
+    {
+      "number": 20,
+      "key": "presencia",
+      "title": "Coordina sin duplicar esfuerzos",
+      "section": "EQUIPO Y RECORDATORIOS",
+      "dark": false
+    },
+    {
+      "number": 21,
+      "key": "reportes",
+      "title": "Centro de datos: del seguimiento al reporte",
+      "section": "REPORTES Y CONTINUIDAD",
+      "dark": false
+    },
+    {
+      "number": 22,
+      "key": "powerbi",
+      "title": "Power BI: analiza el CRM desde Windows",
+      "section": "REPORTES Y CONTINUIDAD",
+      "dark": false
+    },
+    {
+      "number": 23,
+      "key": "respaldo",
+      "title": "Entrega de cargo: conserva la continuidad",
+      "section": "REPORTES Y CONTINUIDAD",
+      "dark": false
+    },
+    {
+      "number": 24,
+      "key": "actualizar",
+      "title": "Actualiza el CRM sin reinstalar cada cambio",
+      "section": "ACTUALIZACIONES",
+      "dark": false
+    },
+    {
+      "number": 25,
+      "key": "ayuda",
+      "title": "Si algo no funciona, elige el síntoma",
+      "section": "AYUDA INTERACTIVA",
+      "dark": false
+    },
+    {
+      "number": 26,
+      "key": "ayuda-manifest",
+      "title": "“Falta el archivo de manifiesto”",
+      "section": "RESOLVER: INSTALACIÓN",
+      "dark": false
+    },
+    {
+      "number": 27,
+      "key": "ayuda-chat",
+      "title": "El chat no se actualiza: revisa el lector",
+      "section": "RESOLVER: CONTEXTO DEL CHAT",
+      "dark": false
+    },
+    {
+      "number": 28,
+      "key": "ayuda-api",
+      "title": "Acceso o API: identifica el mensaje",
+      "section": "RESOLVER: CONEXIÓN",
+      "dark": false
+    },
+    {
+      "number": 29,
+      "key": "practica",
+      "title": "Práctica guiada: una coordinación completa",
+      "section": "APRENDER HACIENDO",
+      "dark": false
+    },
+    {
+      "number": 30,
+      "key": "pregunta",
+      "title": "¿Cómo avisas a Jaruska desde el contacto?",
+      "section": "AUTOEVALUACIÓN INTERACTIVA",
+      "dark": false
+    },
+    {
+      "number": 31,
+      "key": "correcto",
+      "title": "Respuesta correcta",
+      "section": "AUTOEVALUACIÓN",
+      "dark": true
+    },
+    {
+      "number": 32,
+      "key": "reintentar",
+      "title": "Revisa cómo llega el aviso",
+      "section": "AUTOEVALUACIÓN INTERACTIVA",
+      "dark": false
+    },
+    {
+      "number": 33,
+      "key": "recursos",
+      "title": "Listos para coordinar",
+      "section": "RECURSOS CLICABLES",
+      "dark": false
+    }
+  ],
+  "internal_links": 375,
+  "external_links": 22,
+  "logo_sha256": "2e69ebb61839f6dc8a4285b80e9828d72fe5a7561120a8ea2ce53af8d46e6608",
+  "pptx_sha256": "c2b3f92f8d41781f35b29809dfa75c75841c864e9f89fa502e94b7d41da60321",
+  "screenshots": "Datos sintéticos en una D1 local aislada; sin secretos ni registros de producción."
+}

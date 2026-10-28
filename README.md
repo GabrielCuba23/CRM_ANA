@@ -2,6 +2,8 @@
 
 Aplicación React + Tailwind para navegador y Chrome Side Panel, Pages Functions y D1. El mismo repositorio construye la web en `dist/` y una extensión Manifest V3 ligera en `extension-dist/`, que muestra la aplicación HTTPS aislada de Cloudflare. No requiere el celular maestro para gestionar contactos. No es un producto oficial de ANA ni de Meta.
 
+La [guía de capacitación interactiva](docs/capacitacion/README.md) incluye una presentación PowerPoint descargable con las funciones actuales, instalación en cada PC, ejercicios y soluciones a problemas frecuentes.
+
 ## Versión 1.1.0: revisión del alcance
 
 Consulta [la revisión de los 15 apartados](docs/REVISION_15_FUNCIONES.md), basada en el Word entregado y las decisiones confirmadas. Incluye avisos entre operadores, ficha institucional ampliada, tablero global de tareas, calendario, acuerdos con responsables, recordatorios, reportes PDF/Excel con tablas dinámicas y proyecto Power BI .pbip. WhatsApp sigue siendo de solo lectura; las adaptaciones se hacen en el panel.
